@@ -1,0 +1,99 @@
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--line-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+  max-width: 48rem;
+}
+
+.danger {
+  border-color: var(--color-crimson);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line-hairline);
+  flex-wrap: wrap;
+}
+
+.body {
+  padding: var(--space-5);
+}
+
+.body > * + * {
+  margin-top: var(--space-4);
+}
+
+.note {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-min);
+}
+
+.status {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--fs-label);
+}
+
+.status dt {
+  color: var(--text-secondary);
+}
+
+.status dd {
+  margin: 0;
+  font-weight: var(--fw-medium);
+}
+
+.ok {
+  color: var(--tier-pr-ink);
+}
+
+.warn {
+  color: var(--tier-dv-ink);
+}
+
+.steps {
+  margin: var(--space-3) 0 0;
+  padding-left: var(--space-5);
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}
+
+.steps li + li {
+  margin-top: var(--space-1);
+}
+
+.eraseInput {
+  max-width: 12rem;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-button);
+  font-size: var(--fs-body);
+  letter-spacing: var(--ls-stencil);
+  text-transform: uppercase;
+}
+
+.about {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}

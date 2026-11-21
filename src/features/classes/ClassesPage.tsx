@@ -1,7 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useLiveQuery } from 'dexie-react-hooks';
 import Button from '../../components/Button';
-import { formatDateShort, today } from '../../lib/dates';
+import Banner from '../../components/Banner';
+import { formatDateShort, localDateString, today } from '../../lib/dates';
 import { setArchived } from '../../db/repos/classes';
+import { backupIsStale, getSettings } from '../../db/repos/settings';
 import { useClassSummaries, type ClassSummary } from './useClassSummaries';
 import styles from './ClassesPage.module.css';
 
@@ -9,17 +12,40 @@ export default function ClassesPage() {
   const navigate = useNavigate();
   const summaries = useClassSummaries();
   const archived = useClassSummaries(true);
+  const settings = useLiveQuery(() => getSettings(), []);
 
   if (!summaries) return null;
+
+  const anyToday = summaries.some((s) => s.liveToday !== null);
+  // Only nag once there is something worth losing (SPEC 4.8).
+  const nagAboutBackup =
+    settings !== undefined && summaries.length > 0 && backupIsStale(settings);
 
   return (
     <div>
       <div className={styles.head}>
         <h1 className="t-title">Classes</h1>
+        {anyToday ? (
+          <Button onClick={() => navigate('/export')}>Export today</Button>
+        ) : null}
         <Button variant="gold" onClick={() => navigate('/classes/new')}>
           New class
         </Button>
       </div>
+
+      {nagAboutBackup ? (
+        <div style={{ marginBottom: 'var(--space-5)' }}>
+          <Banner tone="warn">
+            <span>
+              {settings.lastBackupAt === undefined
+                ? 'You have never made a backup.'
+                : `Last backup: ${formatDateShort(localDateString(new Date(settings.lastBackupAt)))}.`}{' '}
+              A backup is the only copy of this term that is not on this iPad.
+            </span>
+            <Button onClick={() => navigate('/settings')}>Download backup</Button>
+          </Banner>
+        </div>
+      ) : null}
 
       {summaries.length === 0 ? (
         <section className={styles.empty}>

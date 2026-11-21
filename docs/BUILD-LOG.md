@@ -374,3 +374,37 @@ editor. 183 tests pass, typecheck and lint clean.
 - Editing a rubric a class is mid-session with is allowed. Existing entries are
   safe because they snapshot their names, but the student sheet will change
   under the teacher. Worth a warning if it ever comes up in practice.
+
+## 2026-11-21: Phase 7, settings and onboarding
+
+**Built:** the welcome screen with the install card and demo class, the
+settings page (teacher name, unassessed flag, backup, restore, storage status,
+erase everything, about), and the backup reminder banner plus "Export today"
+shortcut on the Classes page. 183 tests pass, typecheck and lint clean.
+
+Verified the whole data-safety loop through the real UI rather than only in
+unit tests: first run lands on /welcome, the demo class creates 24 students,
+the backup downloads with the right counts, Erase leaves "No classes yet", and
+restoring the file brings all 24 back.
+
+**Key decisions and why:**
+
+- *The install card only appears in a Safari tab.* That is exactly where the
+  data is at risk, and a teacher who has already installed does not need to be
+  told to install.
+- *UI copy never promises persistence.* `navigator.storage.persist()` often
+  resolves false on iOS, so the storage row says "Not granted" plainly and the
+  page says to back up weekly either way. The honest line is that deleting the
+  Home Screen app deletes its data.
+- *The demo roster is deliberately awkward*: two students called Alex, an
+  accent, an apostrophe and a hyphen. If the tile labels or the CSV are going
+  to break, the demo should break them, not a real class.
+- *Restore shows counts and requires a second tap.* It replaces everything, so
+  the confirmation names what is in the file before anything is touched.
+
+**Tricky bits:**
+
+- *`react-hooks/purity` caught a real impurity*: `new Date(lastBackupAt ?? Date.now())`
+  reads the clock during render. The branch only runs when the timestamp
+  exists, so the fallback is now a constant. Lint was right to object; a clock
+  read in render is a re-render that silently differs from the last one.
