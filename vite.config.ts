@@ -3,8 +3,16 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 /* GitHub Pages serves the app from /<repo-name>/, local dev from /.
-   The deploy workflow sets BASE_PATH; everything else defaults to root. */
-const base = process.env.BASE_PATH ?? '/';
+   The deploy workflow sets BASE_PATH; everything else defaults to root.
+
+   The trailing slash is not cosmetic. `actions/configure-pages` emits
+   `base_path` as "/Griffin-Grader" with no slash, and while Vite normalises
+   its own asset URLs, `import.meta.env.BASE_URL` keeps exactly what it was
+   given. Any `${BASE_URL}crest.png` then resolves to "/Griffin-Gradercrest.png"
+   and 404s, which is how the crest turned into a broken-image icon on the
+   first deploy. Normalising here fixes every consumer at once. */
+const rawBase = process.env.BASE_PATH ?? '/';
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 export default defineConfig({
   base,

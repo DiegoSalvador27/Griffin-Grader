@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { assetUrl } from '../../lib/assets';
 import styles from './TopBar.module.css';
 
 const NAV = [
@@ -14,7 +15,7 @@ export default function TopBar() {
       <div className={styles.id}>
         <img
           className={styles.crest}
-          src={`${import.meta.env.BASE_URL}crest.png`}
+          src={assetUrl('crest.png')}
           alt=""
           width={134}
           height={140}

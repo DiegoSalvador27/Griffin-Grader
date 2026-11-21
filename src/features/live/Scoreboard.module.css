@@ -98,18 +98,31 @@
   flex-wrap: wrap;
 }
 
+/* Attendance mode reads as a distinct state, not a subtitle: a gold rule, a
+   gold wash and a gold label, so a teacher glancing down knows which mode a
+   tap is about to act in. */
 .mode {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   flex: 1 1 100%;
   flex-wrap: wrap;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--line-onnavy);
+  margin: var(--space-1) calc(var(--space-5) * -1) calc(var(--space-3) * -1);
+  padding: var(--space-3) var(--space-5);
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right));
+  background: rgba(201, 162, 39, 0.14);
+  border-top: 2px solid var(--color-gold);
 }
 
 .modeLabel {
-  color: var(--color-gold);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-navy);
+  background: var(--color-gold);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-chip);
   white-space: nowrap;
 }
 

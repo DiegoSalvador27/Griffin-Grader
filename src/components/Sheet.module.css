@@ -31,8 +31,7 @@
 }
 
 .body {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  min-height: 0;
 }
 
 .close {

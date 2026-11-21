@@ -23,6 +23,22 @@ export default function Sheet({
   const sheet = useRef<HTMLDivElement>(null);
   const restoreTo = useRef<HTMLElement | null>(null);
 
+  /**
+   * Held in a ref so the effect below can run exactly once.
+   *
+   * It used to depend on `onClose`, and every caller passes an inline arrow,
+   * so a new identity arrived on every parent render. Each live-query update
+   * therefore tore the effect down (focusing whatever was behind the sheet)
+   * and set it up again (focusing the sheet's first control), which dismissed
+   * the iPad keyboard mid-comment. Worse, that blur fired the comment field's
+   * onBlur, which saved, which re-rendered, which blurred again: a loop that
+   * locked the app up. Regression tests in Sheet.test.tsx.
+   */
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     restoreTo.current = document.activeElement as HTMLElement | null;
     sheet.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
@@ -30,7 +46,7 @@ export default function Sheet({
     const onKeyDown = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== 'Tab' || !sheet.current) return;
@@ -52,9 +68,10 @@ export default function Sheet({
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
+      // Only on unmount, never on a re-render.
       restoreTo.current?.focus();
     };
-  }, [onClose]);
+  }, []);
 
   return (
     <div
@@ -81,7 +98,7 @@ export default function Sheet({
             &times;
           </button>
         </div>
-        <div className={styles.body}>{children}</div>
+        <div className={`${styles.body} scroll-region`}>{children}</div>
       </div>
     </div>
   );

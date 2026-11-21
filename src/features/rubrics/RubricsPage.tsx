@@ -5,6 +5,7 @@ import Banner from '../../components/Banner';
 import { useToast } from '../../components/toastContext';
 import { db } from '../../db/db';
 import { newId } from '../../lib/ids';
+import { buildDefaultRubric } from '../../db/seed';
 import {
   categoryInUse,
   duplicateRubric,
@@ -35,11 +36,32 @@ export default function RubricsPage() {
   const usedBy = (rubricId: ID): string[] =>
     classes.filter((c) => c.rubricId === rubricId).map((c) => c.name);
 
+  /** Starts from the standard PE rubric rather than a blank one: a rubric
+      with no categories or levels cannot grade anything. */
+  const addRubric = async (): Promise<void> => {
+    const fresh = buildDefaultRubric();
+    await saveRubric({ ...fresh, name: 'New rubric' });
+    toast.show('New rubric added');
+  };
+
   return (
     <div>
       <div className={styles.head}>
         <h1 className="t-title">Rubrics</h1>
+        <Button variant="gold" onClick={() => void addRubric()}>
+          New rubric
+        </Button>
       </div>
+
+      {rubrics.length === 0 ? (
+        <section className={styles.card}>
+          <div className={styles.cardBody}>
+            <Banner tone="info">
+              There are no rubrics yet. Add one and you can start a class with it.
+            </Banner>
+          </div>
+        </section>
+      ) : null}
 
       {rubrics.map((rubric) => (
         <RubricEditor

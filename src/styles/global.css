@@ -15,6 +15,24 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/**
+ * The document itself never scrolls or rubber-bands.
+ *
+ * `overscroll-behavior: none` alone does not stop iOS Safari dragging the
+ * whole page: pulling down exposed the background above the navy bar and the
+ * app stopped feeling installed. Pinning html and body to the viewport with
+ * `overflow: hidden` removes the document scroller entirely, so there is
+ * nothing left to drag. Scrolling then belongs to the regions that opt into
+ * it via `.scroll-region`, which keeps momentum scrolling inside the grid,
+ * long pages and sheets.
+ */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background: var(--color-bg);
@@ -23,8 +41,21 @@ body {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
-  /* The app owns the viewport; only designated regions scroll. */
-  overscroll-behavior: none;
+  position: fixed;
+  inset: 0;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Opt in to scrolling. Momentum stays on, and a bounce inside the region
+   cannot propagate up and move the page. */
+.scroll-region {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 h1,

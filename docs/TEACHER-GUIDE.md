@@ -36,7 +36,7 @@ attendance mode.
 
 - Tap a student to cycle **Absent → Present → Late → Absent**.
 - Or tap **Mark all present** and then tap the few who are away.
-- Tap **Done** when the roll is right.
+- Tap the gold **Done taking attendance** button when the roll is right.
 
 A student who arrives late: press and hold their tile for half a second. That
 cycles their attendance without opening anything.

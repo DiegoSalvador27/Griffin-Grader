@@ -85,6 +85,11 @@ export default function LiveClassPage() {
     [attendanceMode, sessionId],
   );
 
+  // Stable identities: these cross into Sheet, whose focus trap must not be
+  // torn down and rebuilt on every live-query update.
+  const closeStudent = useCallback(() => setOpenStudent(null), []);
+  const closeTeamsPanel = useCallback(() => setTeamsPanelOpen(false), []);
+
   const onTileHold = useCallback(
     (student: Student) => {
       // Hold always cycles attendance, in either mode, so a late arrival can
@@ -117,7 +122,7 @@ export default function LiveClassPage() {
 
   if (ended) {
     return (
-      <div className={styles.screen}>
+      <div className={`${styles.screen} scroll-region`}>
         <section className={styles.summary}>
           <div className={styles.summaryHead}>
             <h1 className="t-title">{data.cls.name} finished</h1>
@@ -187,7 +192,7 @@ export default function LiveClassPage() {
         }}
       />
 
-      <div className={styles.gridArea}>
+      <div className={`${styles.gridArea} scroll-region`}>
         {view === 'grid' || !teamSet ? (
           <div className={styles.grid}>
             {data.students.map((student) => (
@@ -262,7 +267,7 @@ export default function LiveClassPage() {
           classId={data.cls.id}
           students={data.students}
           statuses={data.statuses}
-          onClose={() => setTeamsPanelOpen(false)}
+          onClose={closeTeamsPanel}
           onMade={() => {
             setTeamsPanelOpen(false);
             setView('teams');
@@ -280,7 +285,7 @@ export default function LiveClassPage() {
           categories={data.categories}
           levels={data.levels}
           quickComments={data.quickComments}
-          onClose={() => setOpenStudent(null)}
+          onClose={closeStudent}
         />
       ) : null}
     </div>

@@ -9,12 +9,17 @@ import styles from './AppLayout.module.css';
 export default function AppLayout() {
   return (
     <div className={styles.shell}>
+      {/* The bar stays put; everything below it scrolls as one column, so the
+          footer watermark sits at the end of the content rather than being
+          pinned over it. */}
       <TopBar />
-      <UpdateBanner />
-      <main className={styles.main}>
-        <Outlet />
-      </main>
-      <Footer />
+      <div className={`${styles.scroller} scroll-region`}>
+        <UpdateBanner />
+        <main className={styles.main}>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

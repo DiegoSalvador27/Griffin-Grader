@@ -1,17 +1,17 @@
 .screen {
-  min-height: 100dvh;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
   background: var(--color-bg);
 }
 
 .gridArea {
   flex: 1;
+  min-height: 0;
   padding: var(--space-4) var(--space-5);
   padding-left: calc(var(--space-5) + env(safe-area-inset-left));
   padding-right: calc(var(--space-5) + env(safe-area-inset-right));
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Landscape iPad lands on 5 or 6 columns, portrait on 4, Split View on 2 or 3,
@@ -42,6 +42,7 @@
 .summary {
   max-width: 44rem;
   margin: var(--space-8) auto;
+  flex: none;
   background: var(--surface-card);
   border: 1px solid var(--line-hairline);
   border-radius: var(--radius-card);

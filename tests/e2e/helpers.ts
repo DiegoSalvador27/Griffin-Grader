@@ -37,7 +37,9 @@ export async function startClass(
 ): Promise<void> {
   await createClass(page, name, students);
   await page.getByRole('button', { name: /Start class now/ }).click();
-  await page.getByText('Taking attendance').waitFor();
+  // Wait on the button, not the "Taking attendance" label: that phrase now
+  // appears on both the mode pill and the Done button.
+  await page.getByRole('button', { name: 'Done taking attendance' }).waitFor();
 }
 
 /** A student tile, found by the accessible summary it carries. */

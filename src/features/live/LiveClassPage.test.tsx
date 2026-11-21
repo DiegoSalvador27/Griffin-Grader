@@ -87,7 +87,7 @@ describe('live class screen', () => {
     await screen.findByText('Taking attendance');
 
     await user.click(screen.getByRole('button', { name: 'Mark all present' }));
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
 
     await user.click(tile('Bea Ruiz'));
 
@@ -113,7 +113,7 @@ describe('live class screen', () => {
     renderLive(await setup());
     await screen.findByText('Taking attendance');
     await user.click(screen.getByRole('button', { name: 'Mark all present' }));
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
 
     await user.click(tile('Bea Ruiz'));
     const dialog = await screen.findByRole('dialog');
@@ -130,7 +130,7 @@ describe('live class screen', () => {
     const user = userEvent.setup();
     renderLive(await setup());
     await screen.findByText('Taking attendance');
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
 
     await user.click(tile('Bea Ruiz'));
     const dialog = await screen.findByRole('dialog');
@@ -147,7 +147,7 @@ describe('live class screen', () => {
     renderLive(await setup());
     await screen.findByText('Taking attendance');
     await user.click(screen.getByRole('button', { name: 'Mark all present' }));
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
 
     await user.click(tile('Bea Ruiz'));
     const dialog = await screen.findByRole('dialog');
@@ -165,7 +165,7 @@ describe('live class screen', () => {
     renderLive(await setup());
     await screen.findByText('Taking attendance');
     await user.click(screen.getByRole('button', { name: 'Mark all present' }));
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
 
     await user.click(tile('Bea Ruiz'));
     const dialog = await screen.findByRole('dialog');
@@ -178,5 +178,66 @@ describe('live class screen', () => {
     expect(screen.getByText('José Torres')).toBeInTheDocument();
     expect(screen.getByText("Cam O'Neil")).toBeInTheDocument();
     expect(screen.queryByText('Bea Ruiz')).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * Regression tests for the bug reported from the iPad: the keyboard vanished a
+ * second after typing a comment, and re-opening an existing comment froze the
+ * app. Root cause was Sheet's focus trap rebuilding on every live-query
+ * update. See src/components/Sheet.test.tsx for the isolated case.
+ */
+describe('comment editing', () => {
+  async function openSheetAndGrade(user: ReturnType<typeof userEvent.setup>) {
+    renderLive(await setup());
+    await screen.findByText('Taking attendance');
+    await user.click(screen.getByRole('button', { name: 'Mark all present' }));
+    await user.click(screen.getByRole('button', { name: 'Done taking attendance' }));
+    await user.click(tile('Bea Ruiz'));
+    const dialog = await screen.findByRole('dialog');
+    await user.click(within(dialog).getByRole('button', { name: 'Skills: Proficient 2' }));
+    return dialog;
+  }
+
+  it('keeps the comment field focused while the entry saves', async () => {
+    const user = userEvent.setup();
+    const dialog = await openSheetAndGrade(user);
+
+    const field = await within(dialog).findByLabelText(/Comment on Skills PR2/);
+    await user.click(field);
+    await user.type(field, 'Great effort');
+
+    // Let the debounce fire and the live query come back around.
+    await new Promise((r) => setTimeout(r, 900));
+
+    expect(field).toHaveFocus();
+    expect(field).toHaveValue('Great effort');
+    await vi.waitFor(async () => {
+      expect((await db.assessments.toArray())[0]?.comment).toBe('Great effort');
+    });
+  });
+
+  it('lets an existing comment be reopened and edited without looping', async () => {
+    const user = userEvent.setup();
+    const dialog = await openSheetAndGrade(user);
+
+    const field = await within(dialog).findByLabelText(/Comment on Skills PR2/);
+    await user.click(field);
+    await user.type(field, 'test');
+    await new Promise((r) => setTimeout(r, 900));
+
+    // Reopen it from the Today list, the exact step that froze the iPad.
+    await user.click(within(dialog).getByRole('button', { name: 'Comment' }));
+    const reopened = await within(dialog).findByLabelText(/Comment on Skills PR2/);
+    await user.click(reopened);
+    await user.type(reopened, ' more');
+    await new Promise((r) => setTimeout(r, 900));
+
+    expect(reopened).toHaveValue('test more');
+    await vi.waitFor(async () => {
+      expect((await db.assessments.toArray())[0]?.comment).toBe('test more');
+    });
+    // One entry, not a runaway pile of writes.
+    expect(await db.assessments.count()).toBe(1);
   });
 });

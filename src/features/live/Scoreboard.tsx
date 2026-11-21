@@ -1,4 +1,5 @@
 import Button from '../../components/Button';
+import { assetUrl } from '../../lib/assets';
 import { formatDateLong } from '../../lib/dates';
 import styles from './Scoreboard.module.css';
 
@@ -36,7 +37,7 @@ export default function Scoreboard({
       <div className={styles.id}>
         <img
           className={styles.crest}
-          src={`${import.meta.env.BASE_URL}crest.png`}
+          src={assetUrl('crest.png')}
           alt=""
           width={134}
           height={140}
@@ -59,16 +60,37 @@ export default function Scoreboard({
         </div>
       </div>
 
+      {/* In attendance mode the only thing a teacher wants next is Done, so it
+          becomes the gold button and moves to the end, where End class usually
+          sits. End class steps back to a quiet style for the same reason: two
+          gold buttons would compete, and ending a class by accident mid-roll
+          is the worse mistake. */}
       <div className={styles.actions}>
-        <Button variant="onNavy" onClick={onToggleAttendance}>
-          {attendanceMode ? 'Done' : 'Attendance'}
-        </Button>
-        <Button variant="onNavy" onClick={onTeams}>
-          Teams
-        </Button>
-        <Button variant="gold" onClick={onEndClass}>
-          End class
-        </Button>
+        {attendanceMode ? (
+          <>
+            <Button variant="onNavy" onClick={onTeams}>
+              Teams
+            </Button>
+            <Button variant="onNavy" onClick={onEndClass}>
+              End class
+            </Button>
+            <Button variant="gold" size="lg" onClick={onToggleAttendance}>
+              Done taking attendance
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="onNavy" onClick={onToggleAttendance}>
+              Attendance
+            </Button>
+            <Button variant="onNavy" onClick={onTeams}>
+              Teams
+            </Button>
+            <Button variant="gold" onClick={onEndClass}>
+              End class
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Roster-wide actions appear only in attendance mode. One always-visible

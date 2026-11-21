@@ -26,7 +26,7 @@ test.beforeEach(async ({ context }) => {
 /* 1 */
 test('a fresh app can create a class by paste and start it', async ({ page }) => {
   await page.goto('/#/');
-  await expect(page.getByText('Grade your PE classes right from your iPad')).toBeVisible();
+  await expect(page.getByText(/Everything stays on this iPad/)).toBeVisible();
 
   await startClass(page, 'PE 10, Block 2', ROSTER);
 
@@ -62,7 +62,7 @@ test('attendance mode marks present, late and absent with correct counts', async
 test('grading from the sheet updates the tile badge', async ({ page }) => {
   await startClass(page, 'PE 10', ROSTER);
   await page.getByRole('button', { name: 'Mark all present' }).click();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await tile(page, 'Bea Ruiz').click();
   const sheet = page.getByRole('dialog');
@@ -78,7 +78,7 @@ test('grading from the sheet updates the tile badge', async ({ page }) => {
 /* 4 */
 test('grading an absent student marks them present', async ({ page }) => {
   await startClass(page, 'PE 10', ROSTER);
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await expect(tile(page, 'Bea Ruiz, absent')).toBeVisible();
 
@@ -97,7 +97,7 @@ test('teams put every present student in exactly one team', async ({ page }) => 
   for (const name of ['Bea Ruiz', 'José Torres', 'Alex Morrow', 'Alex Martin']) {
     await tile(page, name).click();
   }
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await page.getByRole('button', { name: 'Teams' }).first().click();
   const panel = page.getByRole('dialog');
@@ -124,7 +124,7 @@ test('teams put every present student in exactly one team', async ({ page }) => 
 test('ending a class lists students who were here but not graded', async ({ page }) => {
   await startClass(page, 'PE 10', ROSTER);
   await page.getByRole('button', { name: 'Mark all present' }).click();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await tile(page, 'Bea Ruiz').click();
   const sheet = page.getByRole('dialog');
@@ -144,7 +144,7 @@ test('the PowerSchool CSV contains the expected values', async ({ page }) => {
   await tile(page, 'Bea Ruiz').click();
   await tile(page, 'José Torres').click();
   await tile(page, 'José Torres').click(); // present then late
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await tile(page, 'Bea Ruiz').click();
   const sheet = page.getByRole('dialog');
@@ -185,7 +185,7 @@ test('the PowerSchool CSV contains the expected values', async ({ page }) => {
 test('data survives a reload', async ({ page }) => {
   await startClass(page, 'PE 10', ROSTER);
   await page.getByRole('button', { name: 'Mark all present' }).click();
-  await page.getByRole('button', { name: 'Done', exact: true }).click();
+  await page.getByRole('button', { name: 'Done taking attendance' }).click();
 
   await tile(page, 'Bea Ruiz').click();
   await page.getByRole('dialog').getByRole('button', { name: 'Skills: Proficient 2' }).click();

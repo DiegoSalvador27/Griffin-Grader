@@ -217,8 +217,12 @@ function CommentBox({
 }) {
   const [value, setValue] = useState(assessment.comment);
   const timer = useRef<number | null>(null);
+  /** Last value actually written, so a no-op blur does not hit the database. */
+  const saved = useRef(assessment.comment);
 
   const save = (next: string): void => {
+    if (next === saved.current) return;
+    saved.current = next;
     void setComment(assessment.id, next);
   };
 

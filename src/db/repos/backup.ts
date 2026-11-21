@@ -1,5 +1,6 @@
 import { db, TABLE_NAMES, type TableName } from '../db';
 import { updateSettings } from './settings';
+import { buildDefaultQuickComments, buildDefaultRubric, DEFAULT_SETTINGS } from '../seed';
 import type {
   Assessment,
   Attendance,
@@ -160,17 +161,37 @@ export async function restoreBackup(file: BackupFile): Promise<BackupCounts> {
         await db.table(table).bulkAdd(rows.slice(i, i + CHUNK));
       }
     }
+
+    // Same reasoning as eraseEverything: a backup written by an older build,
+    // or one missing a section, must not leave the app without a rubric.
+    if ((await db.rubrics.count()) === 0) {
+      await db.rubrics.add(buildDefaultRubric());
+    }
+    if (!(await db.settings.get('settings'))) {
+      await db.settings.add(DEFAULT_SETTINGS);
+    }
   });
 
   return countsOf(data);
 }
 
-/** SPEC 4.8 "Erase everything". The caller gates this behind typing ERASE. */
+/**
+ * SPEC 4.8 "Erase everything". The caller gates this behind typing ERASE.
+ *
+ * The default rubric, quick comments and settings row are put back afterwards.
+ * They are app defaults, not the teacher's data, and without them the app is
+ * stranded: the Rubrics page comes back empty with no way to make one, so a
+ * new class cannot be created at all. Erasing has to leave a working app, not
+ * a dead one.
+ */
 export async function eraseEverything(): Promise<void> {
   await db.transaction('rw', db.tables, async () => {
     for (const table of TABLE_NAMES) {
       await db.table(table).clear();
     }
+    await db.rubrics.add(buildDefaultRubric());
+    await db.quickComments.bulkAdd(buildDefaultQuickComments());
+    await db.settings.add(DEFAULT_SETTINGS);
   });
 }
 
