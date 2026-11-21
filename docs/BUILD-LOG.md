@@ -178,3 +178,45 @@ asserts it throws, so the index cannot be "helpfully" added back later.
 - `exactOptionalPropertyTypes` is off. With it on, `{ studentNumber: undefined }`
   and "no studentNumber" become different types, which fights Dexie's update
   patches. Worth revisiting after the trial.
+
+## 2026-11-21: Phase 2, classes and roster import
+
+**Built:** `parsePaste`, `parseCsv` with an editable column mapper, `names`
+(tile labels), the classes list, the three-step new class wizard, the class
+page (roster, settings, delete) and the student page (details, attendance
+totals, editable entry history). 112 tests pass, typecheck and lint clean.
+
+**Key decisions and why:**
+
+- *Tab-separated pastes are always read as First then Last.* A spreadsheet is
+  equally likely to hold either order and there is no way to tell per line, so
+  rather than guess cleverly the preview offers one "Swap first and last"
+  button that fixes the whole list in a tap.
+- *The CSV mapper prefers a split First/Last pair over a combined "Student
+  Name" column*, and prefers "Student Number" over a bare "Number". Nobody has
+  seen a real PowerSchool export yet, so matching is exact-then-contains and
+  every guess is editable. Fixtures live in
+  `src/lib/roster/__fixtures__/powerschool.ts` and are labelled as guesses.
+- *Numbered steps appear in the new class wizard and nowhere else.* It is the
+  only part of the app that is genuinely a sequence, so the numbers carry real
+  information there and would be decoration anywhere else.
+- *Editing a student's name lives on the student page, not inline in the
+  roster table.* The table is for scanning 40 rows; putting three text inputs
+  in every row would wreck that.
+
+**Tricky bits:**
+
+- *`displayNames` had a real bug the tests caught.* Collisions were detected by
+  comparing the rendered label, so "Martin" and "Martinez" separated into
+  "Alex Martin" and "Alex Martin." The only difference was a full stop, which
+  is invisible across a gym. Fixed by comparing the surname prefix instead of
+  the label, giving "Alex Martin" and "Alex Martine.". See `prefixKey` in
+  `src/lib/names.ts`.
+- *Headless Chrome screenshots are useless for this app now.* Chrome's
+  `--virtual-time-budget` flag does not drive IndexedDB callbacks, so every
+  page renders blank because `useBoot` never resolves. Verified with a minimal
+  IndexedDB probe over http. Visual checks now go through Playwright WebKit
+  instead, which is the right engine anyway since iPads run WebKit. This cost
+  about twenty minutes of chasing a bug that did not exist.
+- *`App` renders null until the first-run seed lands*, so component tests have
+  to use `findBy*` rather than `getBy*`.

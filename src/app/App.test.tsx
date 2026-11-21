@@ -1,46 +1,48 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
+import { resetDb } from '../db/testing';
 
-// The shell imports the service worker registration through AppLayout's update
-// banner. jsdom has no service worker, so the virtual module is stubbed.
+// The shell registers a service worker through the update banner. jsdom has
+// none, so the virtual module is stubbed.
 vi.mock('virtual:pwa-register', () => ({ registerSW: () => () => {} }));
 
-describe('app shell', () => {
-  it('shows the identity band and the four main sections', () => {
-    render(
-      <MemoryRouter initialEntries={['/classes']}>
-        <App />
-      </MemoryRouter>,
-    );
+beforeEach(resetDb);
 
-    expect(screen.getByText('Griffin Grader')).toBeInTheDocument();
+const renderAt = (path: string) =>
+  render(
+    <MemoryRouter initialEntries={[path]}>
+      <App />
+    </MemoryRouter>,
+  );
+
+describe('app shell', () => {
+  // App renders nothing until the first-run seed lands, so these await.
+  it('shows the identity band and the four main sections', async () => {
+    renderAt('/classes');
+
+    expect(await screen.findByText('Griffin Grader')).toBeInTheDocument();
     for (const label of ['Classes', 'Rubrics', 'Export', 'Settings']) {
       expect(screen.getByRole('link', { name: label })).toBeInTheDocument();
     }
   });
 
-  it('keeps the watermark on the page', () => {
-    render(
-      <MemoryRouter initialEntries={['/classes']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText('Griffin Grader by Diego D.')).toBeInTheDocument();
+  it('keeps the watermark on the page', async () => {
+    renderAt('/classes');
+    expect(await screen.findByText('Griffin Grader by Diego D.')).toBeInTheDocument();
   });
 
-  it('marks the current section for assistive tech', () => {
-    render(
-      <MemoryRouter initialEntries={['/export']}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByRole('link', { name: 'Export' })).toHaveAttribute(
+  it('marks the current section for assistive tech', async () => {
+    renderAt('/export');
+    expect(await screen.findByRole('link', { name: 'Export' })).toHaveAttribute(
       'aria-current',
       'page',
     );
+  });
+
+  it('invites a first class when there are none', async () => {
+    renderAt('/classes');
+    expect(await screen.findByText('No classes yet')).toBeInTheDocument();
   });
 });

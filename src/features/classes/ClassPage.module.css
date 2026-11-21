@@ -1,0 +1,162 @@
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.titleBlock {
+  min-width: 0;
+}
+
+.meta {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+  margin-top: var(--space-1);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--line-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line-hairline);
+  flex-wrap: wrap;
+}
+
+.cardHead > :last-child {
+  margin-left: auto;
+}
+
+.cardBody {
+  padding: var(--space-5);
+}
+
+/* A roster table is wide. It scrolls inside the card so the page body never
+   scrolls sideways. */
+.scroller {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-label);
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  font-size: var(--fs-stencil);
+  font-weight: var(--fw-stencil);
+  letter-spacing: var(--ls-stencil);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--line-hairline);
+  white-space: nowrap;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.nameCell {
+  font-weight: var(--fw-medium);
+}
+
+.nameLink {
+  color: var(--color-navy);
+  text-decoration: none;
+}
+
+.nameLink:hover {
+  text-decoration: underline;
+}
+
+.levelChip {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  margin-right: var(--space-1);
+  border-radius: var(--radius-chip);
+  font-size: var(--fs-stencil);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-stencil);
+  background: var(--surface-sunken);
+  color: var(--color-navy);
+}
+
+.dv {
+  background: var(--tier-dv-tint);
+  color: var(--tier-dv-ink);
+}
+
+.pr {
+  background: var(--tier-pr-tint);
+  color: var(--tier-pr-ink);
+}
+
+.ex {
+  background: var(--tier-ex-tint);
+  color: var(--tier-ex-ink);
+}
+
+.muted {
+  color: var(--text-secondary);
+}
+
+.inactiveRow td {
+  color: var(--text-secondary);
+}
+
+.danger {
+  border-color: var(--color-crimson);
+}
+
+.dangerBody {
+  padding: var(--space-5);
+}
+
+.dangerBody h2 {
+  color: var(--tier-dv-ink);
+}
+
+.dangerBody p {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.grow {
+  flex: 1;
+  min-width: 14rem;
+}

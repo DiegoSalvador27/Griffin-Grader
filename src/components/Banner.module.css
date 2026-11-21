@@ -1,0 +1,27 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-button);
+  font-size: var(--fs-label);
+}
+
+.banner > :last-child {
+  margin-left: auto;
+}
+
+.info {
+  background: var(--tier-pr-tint);
+  color: var(--tier-pr-ink);
+}
+
+.warn {
+  background: var(--tier-ex-tint);
+  color: var(--color-navy);
+}
+
+.danger {
+  background: var(--tier-dv-tint);
+  color: var(--tier-dv-ink);
+}

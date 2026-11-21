@@ -1,0 +1,29 @@
+.chip {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-chip);
+  font-size: var(--fs-stencil);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-stencil);
+  white-space: nowrap;
+}
+
+.DV {
+  background: var(--tier-dv-tint);
+  color: var(--tier-dv-ink);
+}
+
+.PR {
+  background: var(--tier-pr-tint);
+  color: var(--tier-pr-ink);
+}
+
+.EX {
+  background: var(--tier-ex-tint);
+  color: var(--tier-ex-ink);
+}
+
+.other {
+  background: var(--surface-sunken);
+  color: var(--color-navy);
+}

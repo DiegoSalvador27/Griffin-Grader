@@ -1,0 +1,43 @@
+.field {
+  display: block;
+}
+
+.label {
+  display: block;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  margin-bottom: var(--space-2);
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-weight: var(--fw-plain);
+}
+
+/* 16px minimum: anything smaller makes iPadOS zoom the page on focus. */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-button);
+  background: var(--color-white);
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.textarea {
+  min-height: 12rem;
+  resize: vertical;
+  line-height: var(--lh-body);
+  font-family: var(--font-sans);
+}
+
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}

@@ -1,22 +1,28 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from './layout/AppLayout';
 import Placeholder from '../components/Placeholder';
+import { useBoot } from './useBoot';
+import ClassesPage from '../features/classes/ClassesPage';
+import NewClassWizard from '../features/classes/NewClassWizard';
+import ClassPage from '../features/classes/ClassPage';
+import StudentPage from '../features/classes/StudentPage';
 
 export default function App() {
+  const ready = useBoot();
+
+  // Rendering before the seed lands would flash an empty rubric picker.
+  if (!ready) return null;
+
   return (
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/classes" replace />} />
 
-        <Route
-          path="/classes"
-          element={
-            <Placeholder title="Classes" phase="Phase 2">
-              Your classes will live here: start a class, add students, import a
-              roster.
-            </Placeholder>
-          }
-        />
+        <Route path="/classes" element={<ClassesPage />} />
+        <Route path="/classes/new" element={<NewClassWizard />} />
+        <Route path="/classes/:classId" element={<ClassPage />} />
+        <Route path="/classes/:classId/students/:studentId" element={<StudentPage />} />
+
         <Route
           path="/rubrics"
           element={
@@ -51,6 +57,15 @@ export default function App() {
           }
         />
       </Route>
+
+      <Route
+        path="/live/:classId"
+        element={
+          <Placeholder title="Live class" phase="Phase 3">
+            The grading screen is next.
+          </Placeholder>
+        }
+      />
     </Routes>
   );
 }
