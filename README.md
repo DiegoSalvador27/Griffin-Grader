@@ -5,9 +5,7 @@ Attendance, rubric grading (DV1 to EX2), random teams, and a spreadsheet export
 for PowerSchool. No accounts, no backend, no network at runtime: every record
 lives in IndexedDB on the teacher's own iPad.
 
-Built by Diego D. Full spec in [`SPEC.md`](SPEC.md). Build history and the
-reasoning behind each decision in [`docs/BUILD-LOG.md`](docs/BUILD-LOG.md).
-One-page guide for teachers in
+Built by Diego D. One-page guide for teachers in
 [`docs/TEACHER-GUIDE.md`](docs/TEACHER-GUIDE.md).
 
 ## Running it

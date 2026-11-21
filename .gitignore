@@ -8,3 +8,13 @@ test-results
 .DS_Store
 .vscode
 .idea
+
+# Kept on Diego's Mac, deliberately not published to the public repo.
+# SPEC.md is the source of truth, CLAUDE.md steers Claude Code, and the
+# build log records why each decision was made. Do not re-add these.
+SPEC.md
+CLAUDE.md
+docs/BUILD-LOG.md
+
+# Screenshots dropped in for debugging a specific issue.
+ScreenshotsToFix/
