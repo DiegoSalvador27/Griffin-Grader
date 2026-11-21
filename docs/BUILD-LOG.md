@@ -220,3 +220,48 @@ totals, editable entry history). 112 tests pass, typecheck and lint clean.
   about twenty minutes of chasing a bug that did not exist.
 - *`App` renders null until the first-run seed lands*, so component tests have
   to use `findBy*` rather than `getBy*`.
+
+## 2026-11-21: Phase 3, the live class screen
+
+**Built:** the core screen. Scoreboard, tile grid with badges and the
+unassessed flag, attendance mode, long-press to cycle, student sheet with
+grading and autosaving comments, undo toasts, wake lock, End class summary.
+Plus the shared `Sheet`, `Toast` and `SegmentedControl` components. 120 tests
+pass (8 new on the grading loop), typecheck and lint clean. Bundle 138 KB
+gzipped, still well under the 250 KB budget.
+
+**Key decisions and why:**
+
+- *One query for the whole screen, never one per tile.* `useLiveSession`
+  fetches students, attendance, counts and rubric in a single `useLiveQuery`.
+  Forty tiles each holding their own live subscription would mean forty
+  re-renders per tap, and SPEC 8 wants the badge under 100ms.
+- *`Tile` is memoised.* Same reason. The grid re-renders on every tap and only
+  one tile actually changed.
+- *Long-press cancels on movement and on `pointercancel`.* It is competing
+  with text selection, the iOS callout and iPad's press-and-drag all at once.
+  A completed hold also suppresses the click that follows it, so one gesture
+  never both cycles attendance AND opens the sheet. See
+  `src/lib/useLongPress.ts`.
+- *The service worker is held back while a class is open.* `holdUpdates(true)`
+  on mount, released on unmount, and a worker that arrives mid-class is offered
+  the moment the class ends.
+- *Undo restores a deleted entry with its original id*, so it is the same row
+  coming back rather than a lookalike.
+- *Roster-wide buttons only exist in attendance mode.* "Mark all absent" one
+  tap away at all times is a way to lose a period of attendance.
+
+**Tricky bits:**
+
+- *Tile sizing was wrong and the screenshot caught it.* `--tile-min-w` was the
+  spec's 120px floor, which packs **8** columns across an iPad in landscape;
+  SPEC 4.5 asks for 5 to 6. Raised to 11rem, which makes
+  `repeat(auto-fill, minmax(…, 1fr))` land on exactly 6 / 4 / 2 for landscape,
+  portrait and Split View. Measured all three in WebKit rather than guessing.
+- *The attendance hint wrapped to six lines in Split View* and pushed the grid
+  off screen. It is hidden under 700px; the gold "Taking attendance" label and
+  the two buttons already carry the meaning.
+
+**Open:**
+
+- The Teams button shows a placeholder toast until phase 6.

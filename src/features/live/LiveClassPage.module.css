@@ -1,0 +1,113 @@
+.screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.gridArea {
+  flex: 1;
+  padding: var(--space-4) var(--space-5);
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Landscape iPad lands on 5 or 6 columns, portrait on 4, Split View on 2 or 3,
+   driven by the tile's own minimum width rather than by breakpoints. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--tile-min-w), 1fr));
+  gap: var(--space-3);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  background: var(--surface-card);
+  border-top: 1px solid var(--line-hairline);
+  flex-wrap: wrap;
+}
+
+.watermark {
+  margin-left: auto;
+  font-size: var(--fs-watermark);
+  color: var(--text-secondary);
+}
+
+.summary {
+  max-width: 44rem;
+  margin: var(--space-8) auto;
+  background: var(--surface-card);
+  border: 1px solid var(--line-hairline);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.summaryHead {
+  padding: var(--space-5);
+  border-bottom: 1px solid var(--line-hairline);
+}
+
+.summaryStats {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.stat {
+  min-width: 5rem;
+}
+
+.statValue {
+  display: block;
+  font-size: var(--fs-score);
+  font-weight: var(--fw-count);
+  letter-spacing: var(--ls-count);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-tight);
+}
+
+.statLabel {
+  color: var(--text-secondary);
+}
+
+.missed {
+  padding: 0 var(--space-5) var(--space-5);
+}
+
+.missedList {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.missedName {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-chip);
+  background: var(--tier-pr-tint);
+  color: var(--tier-pr-ink);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+}
+
+.summaryActions {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-top: 1px solid var(--line-hairline);
+  flex-wrap: wrap;
+}
+
+.loading {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--text-secondary);
+}

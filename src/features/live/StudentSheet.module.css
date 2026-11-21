@@ -1,0 +1,213 @@
+.title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+
+.sub {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+  margin-top: 2px;
+}
+
+.category {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line-hairline);
+}
+
+.categoryHead {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.categoryName {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+}
+
+.categoryDesc {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}
+
+.levels {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-2);
+}
+
+@media (max-width: 620px) {
+  .levels {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.level {
+  position: relative;
+  height: var(--level-btn-h);
+  border-radius: var(--radius-button);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-stencil);
+  font-size: var(--fs-body);
+  display: grid;
+  place-items: center;
+  touch-action: manipulation;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.level:active {
+  transform: scale(0.97);
+}
+
+/* The "1" levels are tints with a 2px edge. Without the edge a pale fill next
+   to a saturated one reads as a disabled control. */
+.DV1 {
+  background: var(--tier-dv-tint);
+  color: var(--tier-dv-ink);
+  box-shadow: inset 0 0 0 2px var(--tier-dv-edge);
+}
+
+.DV2 {
+  background: var(--tier-dv);
+  color: var(--tier-dv-on);
+}
+
+.PR1 {
+  background: var(--tier-pr-tint);
+  color: var(--tier-pr-ink);
+  box-shadow: inset 0 0 0 2px var(--tier-pr-edge);
+}
+
+.PR2 {
+  background: var(--tier-pr);
+  color: var(--tier-pr-on);
+}
+
+.EX1 {
+  background: var(--tier-ex-tint);
+  color: var(--tier-ex-ink);
+  box-shadow: inset 0 0 0 2px var(--tier-ex-edge);
+}
+
+.EX2 {
+  background: var(--tier-ex);
+  color: var(--tier-ex-on);
+}
+
+.other {
+  background: var(--surface-sunken);
+  color: var(--color-navy);
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+
+/* Latest entry for this category today. */
+.level[aria-pressed='true'] {
+  box-shadow:
+    0 0 0 3px var(--color-white),
+    0 0 0 6px var(--color-navy);
+}
+
+.repeat {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--color-navy);
+  color: var(--text-onnavy);
+  font-size: var(--fs-stencil);
+  font-weight: var(--fw-bold);
+  border-radius: var(--radius-chip);
+  padding: 2px 6px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.commentBox {
+  margin-top: var(--space-3);
+}
+
+.commentInput {
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-button);
+  background: var(--color-white);
+  font-size: var(--fs-body);
+}
+
+.commentInput:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-chip);
+  background: var(--surface-sunken);
+  color: var(--color-navy);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  touch-action: manipulation;
+}
+
+.today {
+  padding: var(--space-4) var(--space-5);
+}
+
+.todayTitle {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-3);
+}
+
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--line-hairline);
+  font-size: var(--fs-label);
+  flex-wrap: wrap;
+}
+
+.time {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.entryCat {
+  font-weight: var(--fw-stencil);
+  min-width: 6rem;
+}
+
+.entryComment {
+  flex: 1;
+  min-width: 8rem;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}

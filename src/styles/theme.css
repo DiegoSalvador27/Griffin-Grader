@@ -160,7 +160,11 @@
      9. Touch and motion
      --------------------------------------------------------------- */
   --tap-min: 2.75rem; /* 44px, Apple's minimum */
-  --tile-min-w: 7.5rem; /* 120px */
+  /* 176px, chosen so `repeat(auto-fill, minmax(…, 1fr))` lands on exactly the
+     column counts SPEC 4.5 asks for: 6 in landscape (1194), 4 in portrait
+     (834), 2 in Split View (507). The spec's 120px floor would pack 8 across
+     in landscape, which wastes the glove-friendly target size. */
+  --tile-min-w: 11rem;
   --tile-min-h: 6.25rem; /* 100px */
   --level-btn-h: 3.5rem; /* 56px, glove-friendly */
   --scoreboard-h: 5.5rem; /* 88px */
