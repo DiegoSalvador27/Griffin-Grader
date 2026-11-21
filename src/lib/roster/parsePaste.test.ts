@@ -65,6 +65,20 @@ describe('parsePasteLine', () => {
     expect(one('Bea Ruiz\t')).toEqual({ firstName: 'Bea', lastName: 'Ruiz' });
   });
 
+  /* A spreadsheet with a blank column between the name and the number: the
+     number is further along the row and must not be dropped. */
+  it('keeps the student number when a middle column is blank', () => {
+    expect(one('Bea Ruiz\t\t123456')).toEqual({
+      firstName: 'Bea',
+      lastName: 'Ruiz',
+      studentNumber: '123456',
+    });
+  });
+
+  it('does not mistake a blank trailing column for a number', () => {
+    expect(one('Bea Ruiz\t\t')).toEqual({ firstName: 'Bea', lastName: 'Ruiz' });
+  });
+
   it('reads a trailing number after "Last, First"', () => {
     expect(one('Ruiz, Bea, 123456')).toEqual({
       firstName: 'Bea',

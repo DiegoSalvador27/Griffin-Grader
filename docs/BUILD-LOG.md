@@ -265,3 +265,51 @@ gzipped, still well under the 250 KB budget.
 **Open:**
 
 - The Teams button shows a placeholder toast until phase 6.
+
+## 2026-11-21: Phase 4, export
+
+**Built:** PowerSchool sheet and full log as pure functions over a gathered
+bundle, CSV writing with BOM and CRLF, the share/download helper, and the
+Export page with its on-screen preview. 147 tests pass (25 new on export),
+typecheck and lint clean.
+
+**Key decisions and why:**
+
+- *Category columns come from the ASSESSMENTS, not the rubrics.* Assessments
+  snapshot `categoryName`, so building columns from the current rubric would
+  silently drop every entry recorded before a rename. Taking the union from the
+  data keeps both the old and new column. Ordering follows the current rubric
+  where a name still matches, so familiar columns stay put.
+- *"Latest level" orders by `createdAt`, never `updatedAt`.* Fixing a typo in a
+  10:14 comment at 10:40 must not promote that older observation over a later
+  one. There is a test for exactly this.
+- *Assessments are selected by which session they belong to, not by a timestamp
+  window.* `Session.date` is the authoritative local calendar day, so an
+  evening class cannot land in the wrong day the way a UTC comparison would.
+- *The export File is built during render, not in the tap handler.*
+  `navigator.share()` only works inside the user's gesture, and awaiting a
+  build first spends that activation, after which iOS Safari throws
+  NotAllowedError. See the note in `src/lib/share.ts`.
+- *Removed students still appear if they have entries in range*, because their
+  marks still need typing into PowerSchool.
+
+**Correction to an assumption from the plan:**
+
+I claimed Playwright's WebKit has no `navigator.share`. It does, and
+`canShare({files})` returns true there, so the export takes the share path and
+never produces a download. The phase 8 E2E spec has to stub both away to
+exercise the Blob fallback whose bytes can be asserted on. Verified the real
+output that way: BOM present, CRLF, `"PE 10, Block 2"` quoted, and a comment
+containing both a comma and quotes escaped as
+`"Great effort, said ""nice shot"""`.
+
+**Tricky bits:**
+
+- *Driving the real export turned up a paste bug the unit tests had missed.*
+  A spreadsheet row like `Bea Ruiz<TAB><TAB>123456`, with a blank column
+  between name and number, dropped the number entirely: the single-filled-cell
+  fallback threw away the rest of the row. Now it keeps the first numeric cell
+  further along. Two tests added.
+- *The BOM is written as `'\uFEFF'`, not a literal.* A raw U+FEFF is invisible
+  in an editor and one stray reformat away from silently breaking accents in
+  Excel.

@@ -7,6 +7,7 @@ import NewClassWizard from '../features/classes/NewClassWizard';
 import ClassPage from '../features/classes/ClassPage';
 import StudentPage from '../features/classes/StudentPage';
 import LiveClassPage from '../features/live/LiveClassPage';
+import ExportPage from '../features/export/ExportPage';
 import { ToastProvider } from '../components/Toast';
 
 export default function App() {
@@ -34,14 +35,7 @@ export default function App() {
               </Placeholder>
             }
           />
-          <Route
-            path="/export"
-            element={
-              <Placeholder title="Export" phase="Phase 4">
-                Preview the PowerSchool sheet and download the day's results.
-              </Placeholder>
-            }
-          />
+          <Route path="/export" element={<ExportPage />} />
           <Route
             path="/settings"
             element={

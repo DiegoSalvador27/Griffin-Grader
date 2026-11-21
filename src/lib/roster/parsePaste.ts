@@ -38,8 +38,16 @@ function fromTabs(line: string): NewStudent | null {
   const number = cells[2] ?? '';
 
   if (first === '' && last === '') return null;
-  // A single filled cell is a whole name, not a first name on its own.
-  if (last === '') return fromSpaces(first);
+
+  // A single filled name cell is a whole name, not a first name on its own.
+  // A spreadsheet with a blank column in between still has its number further
+  // along, so keep the first numeric-looking cell rather than dropping it.
+  if (last === '') {
+    const parsed = fromSpaces(first);
+    if (!parsed) return null;
+    const trailing = cells.slice(1).find((c) => c !== '' && /\d/.test(c));
+    return trailing ? { ...parsed, studentNumber: trailing } : parsed;
+  }
 
   return build(first, last, number);
 }
