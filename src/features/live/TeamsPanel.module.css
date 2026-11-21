@@ -1,0 +1,57 @@
+.title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+
+.sub {
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+  margin-top: 2px;
+}
+
+.body {
+  padding: var(--space-5);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stepperValue {
+  min-width: 2.5rem;
+  text-align: center;
+  font-size: var(--fs-score);
+  font-weight: var(--fw-count);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--ls-count);
+  line-height: 1;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  min-height: var(--tap-min);
+  font-size: var(--fs-body);
+}
+
+.preview {
+  margin-top: var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--fs-label);
+}
+
+.actions {
+  margin-top: var(--space-5);
+}

@@ -313,3 +313,36 @@ containing both a comma and quotes escaped as
 - *The BOM is written as `'\uFEFF'`, not a literal.* A raw U+FEFF is invisible
   in an editor and one stray reformat away from silently breaking accents in
   Excel.
+
+## 2026-11-21: Phase 6 (taken before 5), teams
+
+Swapped the order of the last two feature phases. Teams gets used live in the
+gym on Monday; the rubric editor is a configuration screen a teacher may never
+open during the trial, because the seeded default rubric is already right. So
+Teams landed first and the editor goes second.
+
+**Built:** `src/lib/teams/randomize.ts` (pure, seeded, 27 tests), the Teams
+panel, the Teams view with grouped tiles, and the Grid/Teams toggle. 174 tests
+pass, typecheck and lint clean.
+
+**Key decisions and why:**
+
+- *"Groups of N" means ceil(count / N) teams, then balanced.* That is what
+  makes SPEC 4.5's example work: 22 students in groups of 4 gives 4,4,4,4,3,3
+  rather than 4,4,4,4,4,2. A team of 2 against teams of 4 is not a game. There
+  is a sweep test over 1 to 45 students and group sizes 2 to 6 asserting sizes
+  never differ by more than one. Verified in the real app too, not just the
+  unit test: 22 students produced exactly 4,4,4,4,3,3.
+- *The RNG is injectable.* `splitIntoTeams` takes a `random` function so tests
+  are deterministic, and Re-roll is just another call.
+- *Moving students is an explicit mode.* SPEC 4.5 wants tiles to stay tappable
+  for grading in the Teams view AND wants "tap a student, then tap a team" for
+  moving. Those two cannot both own a plain tap, so there is a "Move students"
+  button that switches what a tap does, rather than guessing. Team headers only
+  become buttons while someone is actually picked up.
+
+**Open:**
+
+- Re-roll is done by reopening the panel and tapping Make teams again, which
+  saves a new TeamSet. A dedicated Re-roll button in the Teams view would be
+  one tap instead of three.

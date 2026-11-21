@@ -13,6 +13,11 @@ import { useLiveSession } from './useLiveSession';
 import Scoreboard from './Scoreboard';
 import Tile from './Tile';
 import StudentSheet from './StudentSheet';
+import TeamsPanel from './TeamsPanel';
+import TeamsView from './TeamsView';
+import SegmentedControl from '../../components/SegmentedControl';
+import { latestTeamSet } from '../../db/repos/teams';
+import { useLiveQuery } from 'dexie-react-hooks';
 import type { ID, Student } from '../../db/types';
 import styles from './LiveClassPage.module.css';
 
@@ -28,6 +33,13 @@ export default function LiveClassPage() {
   const [attendanceMode, setAttendanceMode] = useState(true);
   const [openStudent, setOpenStudent] = useState<Student | null>(null);
   const [ended, setEnded] = useState(false);
+  const [view, setView] = useState<'grid' | 'teams'>('grid');
+  const [teamsPanelOpen, setTeamsPanelOpen] = useState(false);
+  // Moving is its own mode. In Teams view a tap still grades, same as the
+  // grid, so "tap a student then tap a team" needs an explicit switch rather
+  // than quietly changing what a tap means.
+  const [moving, setMoving] = useState(false);
+  const [picked, setPicked] = useState<ID | null>(null);
 
   useEffect(() => {
     if (!classId) return;
@@ -57,6 +69,10 @@ export default function LiveClassPage() {
   useEffect(() => keepAwake(), []);
 
   const data = useLiveSession(classId, sessionId ?? undefined);
+  const teamSet = useLiveQuery(
+    () => (sessionId ? latestTeamSet(sessionId) : Promise.resolve(undefined)),
+    [sessionId],
+  );
 
   const onTileTap = useCallback(
     (student: Student) => {
@@ -164,7 +180,7 @@ export default function LiveClassPage() {
             status,
           );
         }}
-        onTeams={() => toast.show('Teams is coming in the next build step.')}
+        onTeams={() => setTeamsPanelOpen(true)}
         onEndClass={() => {
           void endSession(sessionId);
           setEnded(true);
@@ -172,27 +188,88 @@ export default function LiveClassPage() {
       />
 
       <div className={styles.gridArea}>
-        <div className={styles.grid}>
-          {data.students.map((student) => (
-            <Tile
-              key={student.id}
-              student={student}
-              label={data.labels.get(student.id) ?? student.firstName}
-              status={data.statuses.get(student.id) ?? 'absent'}
-              count={data.counts.get(student.id) ?? 0}
-              flagUnassessed={data.flagUnassessed}
-              onTap={() => onTileTap(student)}
-              onLongPress={() => onTileHold(student)}
-            />
-          ))}
-        </div>
+        {view === 'grid' || !teamSet ? (
+          <div className={styles.grid}>
+            {data.students.map((student) => (
+              <Tile
+                key={student.id}
+                student={student}
+                label={data.labels.get(student.id) ?? student.firstName}
+                status={data.statuses.get(student.id) ?? 'absent'}
+                count={data.counts.get(student.id) ?? 0}
+                flagUnassessed={data.flagUnassessed}
+                onTap={() => onTileTap(student)}
+                onLongPress={() => onTileHold(student)}
+              />
+            ))}
+          </div>
+        ) : (
+          <TeamsView
+            teamSet={teamSet}
+            students={data.students}
+            labels={data.labels}
+            statuses={data.statuses}
+            counts={data.counts}
+            flagUnassessed={data.flagUnassessed}
+            moving={moving}
+            picked={picked}
+            onPick={setPicked}
+            onOpenStudent={setOpenStudent}
+          />
+        )}
       </div>
 
       <div className={styles.toolbar}>
         <Button onClick={() => navigate('/classes')}>Leave</Button>
+
+        {teamSet ? (
+          <SegmentedControl
+            label="View"
+            value={view}
+            options={[
+              { value: 'grid', label: 'Grid' },
+              { value: 'teams', label: 'Teams' },
+            ]}
+            onChange={(next) => {
+              setView(next);
+              if (next === 'grid') {
+                setMoving(false);
+                setPicked(null);
+              }
+            }}
+          />
+        ) : null}
+
+        {view === 'teams' && teamSet ? (
+          <Button
+            variant={moving ? 'gold' : 'ghost'}
+            onClick={() => {
+              setMoving((v) => !v);
+              setPicked(null);
+            }}
+          >
+            {moving ? 'Done moving' : 'Move students'}
+          </Button>
+        ) : null}
+
         <ToastStack />
         <p className={styles.watermark}>{WATERMARK}</p>
       </div>
+
+      {teamsPanelOpen ? (
+        <TeamsPanel
+          sessionId={sessionId}
+          classId={data.cls.id}
+          students={data.students}
+          statuses={data.statuses}
+          onClose={() => setTeamsPanelOpen(false)}
+          onMade={() => {
+            setTeamsPanelOpen(false);
+            setView('teams');
+            toast.show('Teams made');
+          }}
+        />
+      ) : null}
 
       {openStudent ? (
         <StudentSheet
