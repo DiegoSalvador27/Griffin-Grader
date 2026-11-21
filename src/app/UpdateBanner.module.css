@@ -1,0 +1,21 @@
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) var(--space-5) 0;
+  padding: var(--space-3) var(--space-4);
+  background: var(--tier-ex-tint);
+  border-radius: var(--radius-button);
+  font-size: var(--fs-label);
+}
+
+.action {
+  margin-left: auto;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-button);
+  background: var(--color-gold);
+  color: var(--text-ongold);
+  font-weight: var(--fw-stencil);
+  white-space: nowrap;
+}

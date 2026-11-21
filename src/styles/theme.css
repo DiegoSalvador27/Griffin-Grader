@@ -1,0 +1,182 @@
+/* Griffin Grader: design tokens. Single source of truth for every colour,
+   type size, space and radius. Components must never hard-code a hex value.
+   Change a token here and the whole app re-themes. See SPEC.md section 5. */
+
+:root {
+  /* ---------------------------------------------------------------
+     1. Brand palette (locked by SPEC.md section 5)
+     --------------------------------------------------------------- */
+  --color-navy: #0b1f3a; /* primary: scoreboard, headings, text */
+  --color-gold: #c9a227; /* accent: primary buttons, Late, EX tier */
+  --color-white: #ffffff;
+  --color-bg: #f5f7fa; /* page background */
+  --color-sky: #4a90c2; /* info: unassessed ring, PR tier */
+  --color-crimson: #b23a48; /* destructive actions, DV tier */
+  --color-muted: #6b7280; /* secondary text, watermark */
+
+  /* Text-safe variants. --color-sky is 3.2:1 on --color-bg, which passes the
+     3:1 bar for a ring or border but fails AA (4.5:1) for words. Anything that
+     carries text uses the -deep variant instead. */
+  --color-sky-deep: #2e6e9e; /* 5.1:1 on bg, 5.5:1 under white */
+  --color-navy-soft: #1d3a5f; /* lifted navy for pressed states and rules */
+
+  /* ---------------------------------------------------------------
+     2. Surfaces and lines
+     --------------------------------------------------------------- */
+  --surface-card: var(--color-white);
+  --surface-sunken: #edf0f4; /* absent tiles, inert wells */
+  --surface-scoreboard: var(--color-navy);
+  --surface-overlay: rgba(11, 31, 58, 0.5); /* behind the student sheet */
+
+  --line-hairline: #dfe4ea; /* card and table rules */
+  --line-strong: #c3ccd6; /* dashed absent border, dividers that must read */
+  --line-onnavy: rgba(255, 255, 255, 0.16);
+
+  /* ---------------------------------------------------------------
+     3. Text
+     --------------------------------------------------------------- */
+  --text-primary: var(--color-navy);
+  --text-secondary: var(--color-muted);
+  --text-onnavy: var(--color-white);
+  --text-onnavy-dim: rgba(255, 255, 255, 0.64);
+  --text-ongold: var(--color-navy); /* gold never takes white text: 2.4:1 */
+
+  /* ---------------------------------------------------------------
+     4. Rubric tiers
+     Level "1" is a tint with dark tier ink; level "2" is the full colour.
+     The level code is always printed, so colour is never the only signal.
+     --------------------------------------------------------------- */
+  --tier-dv: var(--color-crimson);
+  --tier-pr: var(--color-sky-deep);
+  --tier-ex: var(--color-gold);
+
+  /* The -edge tones outline the tint buttons. Without an edge a pale fill
+     next to a saturated one reads as a disabled control. */
+  --tier-dv-tint: #f6e3e6;
+  --tier-dv-ink: #8e2e3a;
+  --tier-dv-edge: #e0aeb6;
+  --tier-dv-on: var(--color-white);
+
+  --tier-pr-tint: #e3eef6;
+  --tier-pr-ink: #235a82;
+  --tier-pr-edge: #afcde3;
+  --tier-pr-on: var(--color-white);
+
+  --tier-ex-tint: #f8efd4;
+  --tier-ex-ink: var(--color-navy);
+  --tier-ex-edge: #e6d199;
+  --tier-ex-on: var(--color-navy); /* gold rule */
+
+  /* ---------------------------------------------------------------
+     5. Attendance
+     --------------------------------------------------------------- */
+  --att-present: var(--color-navy);
+  --att-late: var(--color-gold);
+  --att-absent: #9ca3af; /* the dashed rule only: 2.4:1, never for words */
+  --att-absent-ink: #5b6472; /* the word "ABSENT": 4.9:1 on sunken */
+
+  --flag-unassessed: var(--color-sky); /* 3:1 ring, paired with a text label */
+
+  /* ---------------------------------------------------------------
+     6. Team colours: 8 hues, every one AA against its own text.
+     Teams are always named as well as coloured.
+     --------------------------------------------------------------- */
+  --team-1: #0b1f3a;
+  --team-2: #c9a227;
+  --team-3: #2e6e9e;
+  --team-4: #b23a48;
+  --team-5: #2f6b52;
+  --team-6: #6a4a7c;
+  --team-7: #4b5a6b;
+  --team-8: #a85a2e;
+
+  --team-1-on: var(--color-white);
+  --team-2-on: var(--color-navy);
+  --team-3-on: var(--color-white);
+  --team-4-on: var(--color-white);
+  --team-5-on: var(--color-white);
+  --team-6-on: var(--color-white);
+  --team-7-on: var(--color-white);
+  --team-8-on: var(--color-white);
+
+  /* ---------------------------------------------------------------
+     7. Type
+     One family, three registers:
+       Count   huge tabular numerals, for anything that changes as you tap
+       Stencil uppercase and letter-spaced, for labels and codes
+       Plain   names and sentences
+     No web fonts: the app must load in airplane mode.
+     --------------------------------------------------------------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+
+  --fs-score: 2.125rem; /* 34px scoreboard numerals */
+  --fs-h1: 1.625rem; /* 26px page titles */
+  --fs-h2: 1.25rem; /* 20px section and sheet titles */
+  --fs-initials: 1.75rem; /* 28px tile initials */
+  --fs-body: 1rem; /* 16px; never smaller on inputs, iOS zooms below 16 */
+  --fs-label: 0.8125rem; /* 13px secondary lines */
+  --fs-stencil: 0.6875rem; /* 11px uppercase labels */
+  --fs-watermark: 0.75rem; /* 12px */
+
+  --fw-plain: 400;
+  --fw-medium: 500;
+  --fw-stencil: 600;
+  --fw-bold: 700;
+  --fw-count: 800;
+
+  --ls-count: -0.02em;
+  --ls-tight: -0.01em;
+  --ls-stencil: 0.08em;
+
+  --lh-tight: 1.1;
+  --lh-body: 1.45;
+
+  /* ---------------------------------------------------------------
+     8. Space, radius, elevation
+     --------------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --radius-chip: 999px;
+  --radius-button: 0.75rem;
+  --radius-tile: 0.875rem;
+  --radius-card: 1rem;
+  --radius-sheet: 1.25rem;
+
+  /* Shadows are navy-tinted, not black: a grey shadow over a blue-grey page
+     reads as dirt. */
+  --shadow-card: 0 1px 2px rgba(11, 31, 58, 0.06), 0 4px 12px rgba(11, 31, 58, 0.08);
+  --shadow-raised: 0 2px 4px rgba(11, 31, 58, 0.08), 0 12px 28px rgba(11, 31, 58, 0.16);
+  --shadow-sheet: 0 -8px 40px rgba(11, 31, 58, 0.24);
+
+  /* ---------------------------------------------------------------
+     9. Touch and motion
+     --------------------------------------------------------------- */
+  --tap-min: 2.75rem; /* 44px, Apple's minimum */
+  --tile-min-w: 7.5rem; /* 120px */
+  --tile-min-h: 6.25rem; /* 100px */
+  --level-btn-h: 3.5rem; /* 56px, glove-friendly */
+  --scoreboard-h: 5.5rem; /* 88px */
+
+  --dur-fast: 100ms;
+  --dur-base: 150ms;
+  --dur-press: 500ms; /* long-press to cycle attendance */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  --focus-ring: 0 0 0 3px var(--color-white), 0 0 0 6px var(--color-sky-deep);
+  --focus-ring-onnavy: 0 0 0 3px var(--color-navy), 0 0 0 6px var(--color-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+  }
+}

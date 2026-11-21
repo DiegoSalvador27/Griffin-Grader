@@ -1,0 +1,75 @@
+/* The navy identity band. The live class screen replaces this with its own
+   scoreboard, so this is the "everywhere else" header. */
+.bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--space-4);
+  row-gap: var(--space-3);
+  /* black-translucent status bar: content would otherwise sit under the clock */
+  padding: calc(var(--space-4) + env(safe-area-inset-top)) var(--space-5) var(--space-4);
+  padding-left: calc(var(--space-5) + env(safe-area-inset-left));
+  padding-right: calc(var(--space-5) + env(safe-area-inset-right));
+  background: var(--surface-scoreboard);
+  color: var(--text-onnavy);
+  border-bottom: 2px solid var(--color-gold);
+}
+
+.id {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* The crest is a navy shield, so on the navy band it needs a light plate
+   under it or it disappears. Same treatment as the app icon. */
+.crest {
+  width: 2rem;
+  height: auto;
+  flex: none;
+  padding: var(--space-1);
+  background: var(--color-white);
+  border-radius: var(--radius-button);
+  box-sizing: content-box;
+}
+
+.name {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-tight);
+}
+
+.school {
+  color: var(--text-onnavy-dim);
+  margin-top: 2px;
+}
+
+.nav {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-button);
+  color: var(--text-onnavy-dim);
+  text-decoration: none;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-stencil);
+  touch-action: manipulation;
+}
+
+.link:focus-visible {
+  box-shadow: var(--focus-ring-onnavy);
+}
+
+.link[aria-current='page'] {
+  background: var(--color-gold);
+  color: var(--text-ongold);
+}

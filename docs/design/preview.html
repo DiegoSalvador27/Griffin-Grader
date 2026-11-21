@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Griffin Grader: visual direction</title>
+
+    <!-- The real token files. Edit src/styles/theme.css and this page re-themes. -->
+    <link rel="stylesheet" href="../../src/styles/global.css" />
+
+    <style>
+      /* ============================================================
+         PREVIEW CHROME (this page only, not shipped)
+         ============================================================ */
+      .pv-wrap { max-width: 1194px; margin: 0 auto; padding: var(--space-8) var(--space-4) var(--space-12); }
+      .pv-intro { margin-bottom: var(--space-8); }
+      .pv-eyebrow { color: var(--color-sky-deep); margin-bottom: var(--space-2); }
+      .pv-intro p { color: var(--text-secondary); max-width: 54ch; margin-top: var(--space-2); }
+      .pv-screen { margin-top: var(--space-10); }
+      .pv-screen > figcaption { color: var(--text-secondary); margin-bottom: var(--space-3); display: flex; gap: var(--space-2); align-items: baseline; }
+      .pv-screen > figcaption b { color: var(--color-navy); letter-spacing: var(--ls-stencil); }
+      .pv-frame { border: 1px solid var(--line-hairline); border-radius: var(--radius-card); overflow: hidden; background: var(--color-bg); box-shadow: var(--shadow-card); }
+
+      /* ============================================================
+         SCOREBOARD  — the signature element
+         A navy band read at arm's length while walking. Counts are
+         tabular so digits do not jitter as they tick.
+         ============================================================ */
+      /* Wraps on its own rather than at a chosen breakpoint: the band has to
+         survive landscape, portrait and a half-width Split View, and the class
+         name is free text whose length we do not control. */
+      .scoreboard {
+        display: flex; align-items: center; flex-wrap: wrap;
+        column-gap: var(--space-6); row-gap: var(--space-3);
+        min-height: var(--scoreboard-h);
+        padding: var(--space-3) var(--space-5);
+        background: var(--surface-scoreboard);
+        color: var(--text-onnavy);
+        border-bottom: 2px solid var(--color-gold);
+      }
+      .sb-id { display: flex; align-items: center; gap: var(--space-3); min-width: 0; flex: 1 1 14rem; }
+      /* The crest is a navy shield, so on the navy band it needs a light
+         plate under it or it disappears. */
+      .sb-crest { width: 2rem; height: auto; flex: none; padding: var(--space-1); background: var(--color-white); border-radius: var(--radius-button); box-sizing: content-box; }
+      .sb-id h1 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); white-space: nowrap; }
+      .sb-id .t-stencil { color: var(--text-onnavy-dim); margin-top: 2px; }
+
+      .sb-counts { display: flex; margin-left: auto; flex: 0 1 auto; }
+      .sb-cell { padding: 0 var(--space-5); border-left: 1px solid var(--line-onnavy); text-align: left; }
+      .sb-cell:first-child { border-left: 0; }
+      .sb-cell .t-count { display: block; }
+      .sb-cell .t-stencil { color: var(--text-onnavy-dim); margin-top: 2px; }
+      /* Coverage is the one number a teacher is anxious about, so it is the
+         one number in gold. No second progress device anywhere on the screen. */
+      .sb-cell--coverage .t-count { color: var(--color-gold); }
+      .sb-cell--coverage .t-stencil { color: var(--color-gold); opacity: 0.8; }
+
+      .sb-actions { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; flex: 0 0 auto; }
+
+      /* ============================================================
+         BUTTONS
+         ============================================================ */
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-button); font-size: var(--fs-body); font-weight: var(--fw-stencil); white-space: nowrap; transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-base) var(--ease-out); }
+      .btn:active { transform: scale(0.97); }
+      .btn--gold { background: var(--color-gold); color: var(--text-ongold); }
+      .btn--onnavy { background: rgba(255, 255, 255, 0.12); color: var(--text-onnavy); }
+      .btn--onnavy:focus-visible { box-shadow: var(--focus-ring-onnavy); }
+      .btn--ghost { background: var(--color-white); color: var(--color-navy); border: 1px solid var(--line-strong); }
+      .btn--wide { width: 100%; }
+      .btn--lg { min-height: 3.25rem; font-size: var(--fs-h2); }
+
+      /* ============================================================
+         TILE GRID
+         ============================================================ */
+      .grid-area { padding: var(--space-4) var(--space-5); }
+      .tile-grid { display: grid; grid-template-columns: repeat(6, minmax(var(--tile-min-w), 1fr)); gap: var(--space-3); }
+
+      .tile {
+        position: relative; display: flex; flex-direction: column; justify-content: space-between;
+        min-height: var(--tile-min-h); padding: var(--space-3);
+        background: var(--surface-card); color: var(--text-primary);
+        border: 1px solid var(--line-hairline); border-radius: var(--radius-tile);
+        box-shadow: var(--shadow-card); text-align: left;
+        transition: transform var(--dur-fast) var(--ease-out);
+      }
+      .tile:active { transform: scale(0.97); }
+      .tile-initials { font-size: var(--fs-initials); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); line-height: 1; }
+      .tile-name { font-size: var(--fs-label); font-weight: var(--fw-medium); color: var(--text-primary); margin-top: var(--space-2); }
+      .tile-status { margin-top: 2px; color: var(--text-secondary); }
+
+      /* Late: a gold stripe down the hinge edge, plus the word. */
+      .tile--late { border-left: 6px solid var(--att-late); padding-left: calc(var(--space-3) - 5px); }
+      .tile--late .tile-status { color: var(--tier-ex-ink); font-weight: var(--fw-bold); }
+
+      /* Absent: recessed and dashed, not faded. SPEC asks for opacity 0.45,
+         which drops the name to about 2:1 against the page. Same "switched
+         off" read, reached by lowering the surface instead of the ink. */
+      .tile--absent { background: var(--surface-sunken); border: 1px dashed var(--att-absent); box-shadow: none; }
+      .tile--absent .tile-initials, .tile--absent .tile-name { color: var(--att-absent-ink); }
+      .tile--absent .tile-status { color: var(--att-absent-ink); }
+
+      /* Not yet assessed: a sky ring. Carries an sr-only label so the ring is
+         never the only signal. */
+      .tile--unassessed { outline: 3px solid var(--flag-unassessed); outline-offset: -1px; }
+
+      .tile-badge { position: absolute; top: var(--space-2); right: var(--space-2); min-width: 1.5rem; height: 1.5rem; padding: 0 var(--space-1); display: grid; place-items: center; border-radius: var(--radius-chip); background: var(--color-navy); color: var(--text-onnavy); font-size: var(--fs-label); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
+
+      /* ============================================================
+         BOTTOM TOOLBAR
+         ============================================================ */
+      .toolbar { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); background: var(--surface-card); border-top: 1px solid var(--line-hairline); }
+      .watermark { margin-left: auto; font-size: var(--fs-watermark); color: var(--text-secondary); }
+
+      .segmented { display: inline-flex; padding: 3px; background: var(--surface-sunken); border-radius: var(--radius-button); gap: 3px; }
+      .segmented button { min-height: 2.25rem; padding: 0 var(--space-4); border-radius: calc(var(--radius-button) - 3px); font-size: var(--fs-label); font-weight: var(--fw-stencil); color: var(--text-secondary); }
+      .segmented button[aria-pressed="true"] { background: var(--color-white); color: var(--color-navy); box-shadow: var(--shadow-card); }
+
+      /* ============================================================
+         STUDENT SHEET
+         ============================================================ */
+      .sheet-stage { position: relative; background: var(--surface-overlay); padding: var(--space-8) var(--space-8) 0; }
+      .sheet { background: var(--surface-card); border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; box-shadow: var(--shadow-sheet); overflow: hidden; }
+      .sheet-head { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); border-bottom: 1px solid var(--line-hairline); }
+      .sheet-head .t-label { margin-left: auto; }
+
+      .cat-row { padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line-hairline); }
+      .cat-head { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-3); }
+      .cat-head .t-label { color: var(--text-secondary); }
+      .level-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); }
+
+      .level { height: var(--level-btn-h); border-radius: var(--radius-button); font-weight: var(--fw-bold); letter-spacing: var(--ls-stencil); font-size: var(--fs-body); display: grid; place-items: center; position: relative; }
+      .level--dv1 { background: var(--tier-dv-tint); color: var(--tier-dv-ink); box-shadow: inset 0 0 0 2px var(--tier-dv-edge); }
+      .level--dv2 { background: var(--tier-dv); color: var(--tier-dv-on); }
+      .level--pr1 { background: var(--tier-pr-tint); color: var(--tier-pr-ink); box-shadow: inset 0 0 0 2px var(--tier-pr-edge); }
+      .level--pr2 { background: var(--tier-pr); color: var(--tier-pr-on); }
+      .level--ex1 { background: var(--tier-ex-tint); color: var(--tier-ex-ink); box-shadow: inset 0 0 0 2px var(--tier-ex-edge); }
+      .level--ex2 { background: var(--tier-ex); color: var(--tier-ex-on); }
+      /* Latest entry for this category today. */
+      .level[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--color-white), 0 0 0 6px var(--color-navy); }
+      .level-count { position: absolute; top: -6px; right: -6px; background: var(--color-navy); color: var(--text-onnavy); font-size: var(--fs-stencil); font-weight: var(--fw-bold); border-radius: var(--radius-chip); padding: 2px 6px; letter-spacing: 0; }
+
+      .chip { display: inline-flex; align-items: center; min-height: 2rem; padding: 0 var(--space-3); border-radius: var(--radius-chip); background: var(--surface-sunken); color: var(--color-navy); font-size: var(--fs-label); font-weight: var(--fw-medium); }
+      .chip-row { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
+
+      .comment-box { margin-top: var(--space-3); }
+      .comment-input { width: 100%; min-height: var(--tap-min); padding: 0 var(--space-3); border: 1px solid var(--line-strong); border-radius: var(--radius-button); background: var(--color-white); font-size: var(--fs-body); }
+      .comment-input:focus-visible { box-shadow: var(--focus-ring); }
+
+      .icon-btn { min-width: var(--tap-min); min-height: var(--tap-min); display: grid; place-items: center; border-radius: var(--radius-button); color: var(--text-secondary); font-size: var(--fs-label); font-weight: var(--fw-stencil); }
+      .icon-btn--danger { color: var(--color-crimson); }
+      .sheet-head .icon-btn { margin-left: auto; font-size: var(--fs-h1); }
+
+      .entry-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+      .entry { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-1) 0; border-top: 1px solid var(--line-hairline); font-size: var(--fs-label); }
+      .entry-time { color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+      .entry-cat { font-weight: var(--fw-stencil); min-width: 6rem; }
+      .entry-comment { color: var(--text-secondary); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .entry-comment--empty { font-style: italic; }
+      .level-chip { padding: 2px var(--space-2); border-radius: var(--radius-chip); font-size: var(--fs-stencil); font-weight: var(--fw-bold); letter-spacing: var(--ls-stencil); }
+
+      /* Toast: the undo window is what makes fast tapping safe, so it is part
+         of the layout rather than something floating over the tiles. */
+      .toast { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); border-radius: var(--radius-chip); background: var(--color-navy); color: var(--text-onnavy); font-size: var(--fs-label); }
+      .toast-undo { min-height: 2rem; padding: 0 var(--space-3); border-radius: var(--radius-chip); background: var(--color-gold); color: var(--text-ongold); font-size: var(--fs-label); font-weight: var(--fw-bold); }
+
+      /* ============================================================
+         CLASSES HOME
+         ============================================================ */
+      .page-head { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); background: var(--surface-scoreboard); color: var(--text-onnavy); border-bottom: 2px solid var(--color-gold); }
+      .page-head nav { margin-left: auto; display: flex; gap: var(--space-1); }
+      .page-head nav a { color: var(--text-onnavy-dim); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-button); font-size: var(--fs-label); font-weight: var(--fw-stencil); }
+      .page-head nav a[aria-current] { color: var(--color-navy); background: var(--color-gold); }
+
+      .class-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); padding: var(--space-5); }
+      .class-card { background: var(--surface-card); border: 1px solid var(--line-hairline); border-radius: var(--radius-card); box-shadow: var(--shadow-card); overflow: hidden; display: flex; flex-direction: column; }
+      .class-card--live { border-color: var(--color-gold); box-shadow: var(--shadow-raised); }
+      .class-card-body { padding: var(--space-4); flex: 1; min-width: 0; }
+      .class-card-body h3 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); }
+      .class-status { color: var(--text-secondary); margin-top: var(--space-2); }
+      /* Not crimson: crimson means destructive everywhere else in the app.
+         The gold card border already says "this one is live". */
+      .class-status--live { color: var(--color-navy); font-weight: var(--fw-bold); }
+      .class-card-body dl { margin: var(--space-3) 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px var(--space-3); font-size: var(--fs-label); }
+      .class-card-body dt { color: var(--text-secondary); }
+      .class-card-body dd { margin: 0; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+      .class-card .btn--gold { border-radius: 0; min-height: 3.25rem; }
+
+      .banner { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-5) var(--space-5) 0; padding: var(--space-3) var(--space-4); background: var(--tier-ex-tint); border-radius: var(--radius-button); font-size: var(--fs-label); }
+      .banner .btn { margin-left: auto; }
+
+      /* ============================================================
+         TEAMS VIEW
+         ============================================================ */
+      .team-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); padding: var(--space-4) var(--space-5); }
+      .team-col { background: var(--surface-card); border: 1px solid var(--line-hairline); border-radius: var(--radius-tile); overflow: hidden; }
+      .team-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-3); }
+      .team-body { display: grid; gap: var(--space-2); padding: var(--space-2); }
+      /* Still a tile, laid on its side: same initials, same badge, same
+         attendance marks, so grading works identically in either view. */
+      .team-member { display: flex; align-items: center; gap: var(--space-3); min-height: var(--tap-min); padding: var(--space-2) var(--space-3); border-radius: var(--radius-button); background: var(--color-bg); font-size: var(--fs-label); font-weight: var(--fw-medium); text-align: left; width: 100%; transition: transform var(--dur-fast) var(--ease-out); }
+      .team-member:active { transform: scale(0.97); }
+      .mini-initials { font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); color: var(--color-navy); }
+      .mini-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .team-member .tile-badge { position: static; margin-left: auto; flex: none; }
+      .team-member--late { border-left: 5px solid var(--att-late); padding-left: calc(var(--space-3) - 5px); }
+      .team-member--unassessed { outline: 2px solid var(--flag-unassessed); outline-offset: -1px; }
+
+      @media (max-width: 900px) {
+        .tile-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .class-list, .team-cols { grid-template-columns: repeat(2, 1fr); }
+        .sb-cell { padding: 0 var(--space-3); }
+      }
+      @media (max-width: 620px) {
+        .tile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .class-list, .team-cols { grid-template-columns: 1fr; }
+        .level-row { grid-template-columns: repeat(3, 1fr); }
+        .sb-counts, .sb-actions { margin-left: 0; }
+        .sb-cell:first-child { padding-left: 0; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pv-wrap">
+      <header class="pv-intro">
+        <p class="t-stencil pv-eyebrow">Griffin Grader &middot; visual direction</p>
+        <h1 class="t-title">The scoreboard, the grid, the sheet</h1>
+        <p>
+          Every colour and size on this page comes from
+          <code>src/styles/theme.css</code>. Change a token there and this page
+          changes with it. Open it on the iPad in landscape to judge the real
+          sizes.
+        </p>
+      </header>
+
+      <!-- ============================================================
+           1. LIVE CLASS
+           ============================================================ -->
+      <figure class="pv-screen">
+        <figcaption><b class="t-stencil">Live class</b> <span class="t-label">the screen a teacher holds for 70 minutes</span></figcaption>
+        <div class="pv-frame">
+          <div class="scoreboard">
+            <div class="sb-id">
+              <img class="sb-crest" src="../../brand/emhs-crest.png" alt="Ernest Manning High School" />
+              <div>
+                <h1>PE 10, Block 2</h1>
+                <p class="t-stencil">Monday 23 November</p>
+              </div>
+            </div>
+
+            <div class="sb-counts">
+              <div class="sb-cell"><span class="t-count">18</span><span class="t-stencil">Present</span></div>
+              <div class="sb-cell"><span class="t-count">2</span><span class="t-stencil">Late</span></div>
+              <div class="sb-cell"><span class="t-count">4</span><span class="t-stencil">Absent</span></div>
+              <div class="sb-cell sb-cell--coverage"><span class="t-count">13/20</span><span class="t-stencil">Graded</span></div>
+            </div>
+
+            <div class="sb-actions">
+              <button class="btn btn--onnavy">Attendance</button>
+              <button class="btn btn--onnavy">Teams</button>
+              <button class="btn btn--gold">End class</button>
+            </div>
+          </div>
+
+          <div class="grid-area">
+            <div class="tile-grid">
+              <button class="tile touch-target"><span class="tile-initials">AM</span><span class="tile-name">Alex Mo.</span><span class="tile-badge">2</span></button>
+              <button class="tile touch-target"><span class="tile-initials">AM</span><span class="tile-name">Alex Ma.</span><span class="tile-badge">1</span></button>
+              <button class="tile tile--unassessed touch-target"><span class="tile-initials">BR</span><span class="tile-name">Bea Ruiz</span><span class="sr-only">Not graded yet</span></button>
+              <button class="tile tile--late touch-target"><span class="tile-initials">CO</span><span class="tile-name">Cam O'Neil</span><span class="tile-status t-stencil">Late</span><span class="tile-badge">1</span></button>
+              <button class="tile tile--absent touch-target"><span class="tile-initials">DK</span><span class="tile-name">Dev Kaur</span><span class="tile-status t-stencil">Absent</span></button>
+              <button class="tile touch-target"><span class="tile-initials">EF</span><span class="tile-name">Eli Fournier</span><span class="tile-badge">3</span></button>
+
+              <button class="tile touch-target"><span class="tile-initials">FN</span><span class="tile-name">Finn Novak</span><span class="tile-badge">1</span></button>
+              <button class="tile tile--unassessed touch-target"><span class="tile-initials">GH</span><span class="tile-name">Gia Haddad</span><span class="sr-only">Not graded yet</span></button>
+              <button class="tile touch-target"><span class="tile-initials">HP</span><span class="tile-name">Hugo Park</span><span class="tile-badge">2</span></button>
+              <button class="tile tile--absent touch-target"><span class="tile-initials">IS</span><span class="tile-name">Iris Singh</span><span class="tile-status t-stencil">Absent</span></button>
+              <button class="tile touch-target"><span class="tile-initials">JT</span><span class="tile-name">José Torres</span><span class="tile-badge">1</span></button>
+              <button class="tile tile--late touch-target"><span class="tile-initials">KL</span><span class="tile-name">Kira Lund</span><span class="tile-status t-stencil">Late</span><span class="tile-badge">2</span></button>
+
+              <button class="tile touch-target"><span class="tile-initials">LB</span><span class="tile-name">Liam Byrne</span><span class="tile-badge">1</span></button>
+              <button class="tile tile--unassessed touch-target"><span class="tile-initials">MK</span><span class="tile-name">Mary-Kate D.</span><span class="sr-only">Not graded yet</span></button>
+              <button class="tile touch-target"><span class="tile-initials">NA</span><span class="tile-name">Noor Ali</span><span class="tile-badge">1</span></button>
+              <button class="tile touch-target"><span class="tile-initials">OW</span><span class="tile-name">Omar Wade</span><span class="tile-badge">4</span></button>
+              <button class="tile tile--absent touch-target"><span class="tile-initials">PC</span><span class="tile-name">Priya Chen</span><span class="tile-status t-stencil">Absent</span></button>
+              <button class="tile touch-target"><span class="tile-initials">RG</span><span class="tile-name">Rosa Gill</span><span class="tile-badge">2</span></button>
+            </div>
+          </div>
+
+          <!-- "Mark all present" lives in attendance mode only. A roster-wide
+               action that is always one tap away is a way to lose a period of
+               attendance by accident. -->
+          <div class="toolbar safe-bottom">
+            <div class="segmented">
+              <button aria-pressed="true">Grid</button>
+              <button aria-pressed="false">Teams</button>
+            </div>
+            <div class="toast" role="status">
+              <span>Skills PR2 saved for Rosa Gill</span>
+              <button class="toast-undo">Undo</button>
+            </div>
+            <p class="watermark">Griffin Grader by Diego D.</p>
+          </div>
+        </div>
+      </figure>
+
+      <!-- ============================================================
+           2. STUDENT SHEET
+           ============================================================ -->
+      <figure class="pv-screen">
+        <figcaption><b class="t-stencil">Student sheet</b> <span class="t-label">tap a tile, tap a level, it is saved</span></figcaption>
+        <div class="pv-frame">
+          <div class="sheet-stage">
+            <div class="sheet">
+              <div class="sheet-head">
+                <div>
+                  <h2 class="t-subtitle">Eli Fournier</h2>
+                  <p class="t-label">3 entries today</p>
+                </div>
+                <div class="segmented" role="group" aria-label="Attendance">
+                  <button aria-pressed="false">Absent</button>
+                  <button aria-pressed="true">Present</button>
+                  <button aria-pressed="false">Late</button>
+                </div>
+                <button class="icon-btn" aria-label="Close">&times;</button>
+              </div>
+
+              <div class="cat-row">
+                <div class="cat-head">
+                  <h3 class="t-subtitle">Skills</h3>
+                  <p class="t-label">Performs the movement with control</p>
+                </div>
+                <div class="level-row">
+                  <button class="level level--dv1">DV1</button>
+                  <button class="level level--dv2">DV2</button>
+                  <button class="level level--pr1">PR1</button>
+                  <button class="level level--pr2" aria-pressed="true">PR2<span class="level-count">x2</span></button>
+                  <button class="level level--ex1">EX1</button>
+                  <button class="level level--ex2">EX2</button>
+                </div>
+              </div>
+
+              <div class="cat-row">
+                <div class="cat-head">
+                  <h3 class="t-subtitle">Teamwork</h3>
+                  <p class="t-label">Includes others and shares the play</p>
+                </div>
+                <div class="level-row">
+                  <button class="level level--dv1">DV1</button>
+                  <button class="level level--dv2">DV2</button>
+                  <button class="level level--pr1">PR1</button>
+                  <button class="level level--pr2">PR2</button>
+                  <button class="level level--ex1" aria-pressed="true">EX1</button>
+                  <button class="level level--ex2">EX2</button>
+                </div>
+                <!-- Tapping a level writes the entry, then opens this field for
+                     it. The chips fill the field; they do not save on their own. -->
+                <div class="comment-box">
+                  <input class="comment-input" type="text" value="Ran the warm-up for her group" aria-label="Comment on Teamwork EX1" />
+                  <div class="chip-row">
+                    <button class="chip">Great effort</button>
+                    <button class="chip">Helped a teammate</button>
+                    <button class="chip">Strong leadership</button>
+                    <button class="chip">Needs to stay on task</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cat-row">
+                <div class="cat-head">
+                  <h3 class="t-subtitle">Participation</h3>
+                  <p class="t-label">Takes part for the whole period</p>
+                </div>
+                <div class="level-row">
+                  <button class="level level--dv1">DV1</button>
+                  <button class="level level--dv2">DV2</button>
+                  <button class="level level--pr1">PR1</button>
+                  <button class="level level--pr2">PR2</button>
+                  <button class="level level--ex1">EX1</button>
+                  <button class="level level--ex2">EX2</button>
+                </div>
+              </div>
+
+              <div class="cat-row">
+                <h3 class="t-stencil" style="color: var(--text-secondary); margin-bottom: var(--space-3)">Today</h3>
+                <ul class="entry-list">
+                  <li class="entry">
+                    <span class="entry-time">10:33</span>
+                    <span class="entry-cat">Skills</span>
+                    <span class="level-chip level--pr2">PR2</span>
+                    <span class="entry-comment">Clean bump set, kept the rally alive</span>
+                    <button class="icon-btn" aria-label="Edit 10:33 Skills entry">Edit</button>
+                    <button class="icon-btn icon-btn--danger" aria-label="Delete 10:33 Skills entry">Delete</button>
+                  </li>
+                  <li class="entry">
+                    <span class="entry-time">10:21</span>
+                    <span class="entry-cat">Teamwork</span>
+                    <span class="level-chip level--ex1">EX1</span>
+                    <span class="entry-comment">Ran the warm-up for her group</span>
+                    <button class="icon-btn" aria-label="Edit 10:21 Teamwork entry">Edit</button>
+                    <button class="icon-btn icon-btn--danger" aria-label="Delete 10:21 Teamwork entry">Delete</button>
+                  </li>
+                  <li class="entry">
+                    <span class="entry-time">10:14</span>
+                    <span class="entry-cat">Skills</span>
+                    <span class="level-chip level--pr2">PR2</span>
+                    <span class="entry-comment entry-comment--empty">No comment</span>
+                    <button class="icon-btn" aria-label="Edit 10:14 Skills entry">Edit</button>
+                    <button class="icon-btn icon-btn--danger" aria-label="Delete 10:14 Skills entry">Delete</button>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="toolbar">
+                <p class="watermark" style="margin-left: 0">Griffin Grader by Diego D.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- ============================================================
+           3. CLASSES
+           ============================================================ -->
+      <figure class="pv-screen">
+        <figcaption><b class="t-stencil">Classes</b> <span class="t-label">the first screen of the day</span></figcaption>
+        <div class="pv-frame">
+          <div class="page-head">
+            <img class="sb-crest" src="../../brand/emhs-crest.png" alt="" />
+            <div>
+              <h1 class="t-subtitle">Griffin Grader</h1>
+              <p class="t-stencil" style="color: var(--text-onnavy-dim); margin-top: 2px">Ernest Manning High School</p>
+            </div>
+            <nav>
+              <a href="#" aria-current="page">Classes</a>
+              <a href="#">Rubrics</a>
+              <a href="#">Export</a>
+              <a href="#">Settings</a>
+            </nav>
+          </div>
+
+          <div class="banner">
+            <span><b>Last backup: 9 days ago.</b> Download a backup so a lost iPad does not lose the term.</span>
+            <button class="btn btn--ghost">Download backup</button>
+          </div>
+
+          <!-- No block-number spine: ClassGroup stores one free-text `name`,
+               so a block number is not a field we actually have. The status
+               line carries real state instead (today's session, or none). -->
+          <div class="class-list">
+            <article class="class-card class-card--live">
+              <div class="class-card-body">
+                <h3>PE 10, Block 2</h3>
+                <p class="class-status class-status--live t-stencil">In progress &middot; 13 of 20 graded</p>
+                <dl>
+                  <dt>Students</dt><dd>24</dd>
+                  <dt>Rubric</dt><dd>PE Rubric</dd>
+                  <dt>Last class</dt><dd>Today</dd>
+                </dl>
+              </div>
+              <button class="btn btn--gold btn--wide">Resume class</button>
+            </article>
+
+            <article class="class-card">
+              <div class="class-card-body">
+                <h3>PE 20, Block 4</h3>
+                <p class="class-status t-stencil">Not started today</p>
+                <dl>
+                  <dt>Students</dt><dd>28</dd>
+                  <dt>Rubric</dt><dd>PE Rubric</dd>
+                  <dt>Last class</dt><dd>Fri 20 Nov</dd>
+                </dl>
+              </div>
+              <button class="btn btn--gold btn--wide">Start class</button>
+            </article>
+
+            <article class="class-card">
+              <div class="class-card-body">
+                <h3>Leadership 30</h3>
+                <p class="class-status t-stencil">Not started today</p>
+                <dl>
+                  <dt>Students</dt><dd>19</dd>
+                  <dt>Rubric</dt><dd>Leadership</dd>
+                  <dt>Last class</dt><dd>Thu 19 Nov</dd>
+                </dl>
+              </div>
+              <button class="btn btn--gold btn--wide">Start class</button>
+            </article>
+          </div>
+
+          <div class="toolbar">
+            <button class="btn btn--ghost">New class</button>
+            <button class="btn btn--ghost">Export today</button>
+            <p class="watermark">Griffin Grader by Diego D.</p>
+          </div>
+        </div>
+      </figure>
+
+      <!-- ============================================================
+           4. TEAMS
+           ============================================================ -->
+      <figure class="pv-screen">
+        <figcaption><b class="t-stencil">Teams</b> <span class="t-label">same tiles, grouped; still tappable for grading</span></figcaption>
+        <div class="pv-frame">
+          <div class="scoreboard">
+            <div class="sb-id">
+              <img class="sb-crest" src="../../brand/emhs-crest.png" alt="" />
+              <div>
+                <h1>PE 10, Block 2</h1>
+                <p class="t-stencil">4 teams &middot; present and late only</p>
+              </div>
+            </div>
+            <div class="sb-actions" style="margin-left: auto">
+              <button class="btn btn--onnavy">Re-roll</button>
+              <button class="btn btn--gold">Done</button>
+            </div>
+          </div>
+
+          <div class="team-cols">
+            <div class="team-col">
+              <div class="team-head" style="background: var(--team-1); color: var(--team-1-on)">
+                <span class="t-stencil">Team 1</span><span class="t-stencil">5</span>
+              </div>
+              <div class="team-body">
+                <button class="team-member touch-target"><span class="mini-initials">AM</span><span class="mini-name">Alex Mo.</span><span class="tile-badge">2</span></button>
+                <button class="team-member team-member--unassessed touch-target"><span class="mini-initials">BR</span><span class="mini-name">Bea Ruiz</span><span class="sr-only">Not graded yet</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">FN</span><span class="mini-name">Finn Novak</span><span class="tile-badge">1</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">JT</span><span class="mini-name">José Torres</span><span class="tile-badge">1</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">NA</span><span class="mini-name">Noor Ali</span><span class="tile-badge">1</span></button>
+              </div>
+            </div>
+
+            <div class="team-col">
+              <div class="team-head" style="background: var(--team-2); color: var(--team-2-on)">
+                <span class="t-stencil">Team 2</span><span class="t-stencil">5</span>
+              </div>
+              <div class="team-body">
+                <button class="team-member touch-target"><span class="mini-initials">AM</span><span class="mini-name">Alex Ma.</span><span class="tile-badge">1</span></button>
+                <button class="team-member team-member--late touch-target"><span class="mini-initials">CO</span><span class="mini-name">Cam O'Neil</span><span class="tile-badge">1</span></button>
+                <button class="team-member team-member--unassessed touch-target"><span class="mini-initials">GH</span><span class="mini-name">Gia Haddad</span><span class="sr-only">Not graded yet</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">HP</span><span class="mini-name">Hugo Park</span><span class="tile-badge">2</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">OW</span><span class="mini-name">Omar Wade</span><span class="tile-badge">4</span></button>
+              </div>
+            </div>
+
+            <div class="team-col">
+              <div class="team-head" style="background: var(--team-3); color: var(--team-3-on)">
+                <span class="t-stencil">Team 3</span><span class="t-stencil">5</span>
+              </div>
+              <div class="team-body">
+                <button class="team-member touch-target"><span class="mini-initials">EF</span><span class="mini-name">Eli Fournier</span><span class="tile-badge">3</span></button>
+                <button class="team-member team-member--late touch-target"><span class="mini-initials">KL</span><span class="mini-name">Kira Lund</span><span class="tile-badge">2</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">LB</span><span class="mini-name">Liam Byrne</span><span class="tile-badge">1</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">RG</span><span class="mini-name">Rosa Gill</span><span class="tile-badge">2</span></button>
+                <button class="team-member team-member--unassessed touch-target"><span class="mini-initials">MK</span><span class="mini-name">Mary-Kate D.</span><span class="sr-only">Not graded yet</span></button>
+              </div>
+            </div>
+
+            <div class="team-col">
+              <div class="team-head" style="background: var(--team-4); color: var(--team-4-on)">
+                <span class="t-stencil">Team 4</span><span class="t-stencil">5</span>
+              </div>
+              <div class="team-body">
+                <button class="team-member touch-target"><span class="mini-initials">SO</span><span class="mini-name">Sam Okafor</span><span class="tile-badge">1</span></button>
+                <button class="team-member team-member--unassessed touch-target"><span class="mini-initials">TV</span><span class="mini-name">Tara Vo</span><span class="sr-only">Not graded yet</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">UP</span><span class="mini-name">Uma Patel</span><span class="tile-badge">2</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">WD</span><span class="mini-name">Wes Dubois</span><span class="tile-badge">1</span></button>
+                <button class="team-member touch-target"><span class="mini-initials">ZM</span><span class="mini-name">Zoe Marchand</span><span class="tile-badge">1</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="toolbar safe-bottom">
+            <div class="segmented">
+              <button aria-pressed="false">Grid</button>
+              <button aria-pressed="true">Teams</button>
+            </div>
+            <p class="watermark">Griffin Grader by Diego D.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </body>
+</html>

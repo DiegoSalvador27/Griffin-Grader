@@ -1,0 +1,12 @@
+/* The watermark goes on every page (CLAUDE.md). On the live class screen it
+   sits inside the bottom toolbar instead, never over the tiles. */
+.footer {
+  padding: var(--space-4) var(--space-5);
+  padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+.mark {
+  font-size: var(--fs-watermark);
+  color: var(--text-secondary);
+}
