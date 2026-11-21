@@ -8,6 +8,7 @@ import ClassPage from '../features/classes/ClassPage';
 import StudentPage from '../features/classes/StudentPage';
 import LiveClassPage from '../features/live/LiveClassPage';
 import ExportPage from '../features/export/ExportPage';
+import RubricsPage from '../features/rubrics/RubricsPage';
 import { ToastProvider } from '../components/Toast';
 
 export default function App() {
@@ -27,14 +28,7 @@ export default function App() {
           <Route path="/classes/:classId" element={<ClassPage />} />
           <Route path="/classes/:classId/students/:studentId" element={<StudentPage />} />
 
-          <Route
-            path="/rubrics"
-            element={
-              <Placeholder title="Rubrics" phase="Phase 5">
-                Edit categories, levels and quick comments.
-              </Placeholder>
-            }
-          />
+          <Route path="/rubrics" element={<RubricsPage />} />
           <Route path="/export" element={<ExportPage />} />
           <Route
             path="/settings"

@@ -346,3 +346,31 @@ pass, typecheck and lint clean.
 - Re-roll is done by reopening the panel and tapping Make teams again, which
   saves a new TeamSet. A dedicated Re-roll button in the Teams view would be
   one tap instead of three.
+
+## 2026-11-21: Phase 5, rubrics and quick comments
+
+**Built:** the rubric editor (rename, categories with descriptions, levels with
+tier colours, reorder, hide vs delete, duplicate) and the quick comments
+editor. 183 tests pass, typecheck and lint clean.
+
+**Key decisions and why:**
+
+- *A category with entries is hidden, not deleted.* `removeCategory` checks
+  `categoryInUse` first; if anything references it the row is flagged hidden
+  and a toast explains that the entries are kept. Only a category nothing has
+  ever used is actually removed. Deleting it outright would leave assessments
+  pointing at a category that no longer exists.
+- *A level in use cannot be removed at all*, it just refuses with a toast
+  naming the level. Hiding does not help there: a level is a button a teacher
+  taps, and a hidden-but-present level is a confusing half state.
+- *Reordering renumbers to 0..n rather than swapping order values.* Swapping
+  works until two rows share an order, after which the list quietly stops
+  being stable. See `move()` in `RubricsPage.tsx`.
+- *Up/Down buttons rather than drag and drop.* Drag competes with scrolling on
+  a touch screen, and this is a screen a teacher opens once a term.
+
+**Open:**
+
+- Editing a rubric a class is mid-session with is allowed. Existing entries are
+  safe because they snapshot their names, but the student sheet will change
+  under the teacher. Worth a warning if it ever comes up in practice.
