@@ -37,22 +37,9 @@ npm run dev -- --host  # open it from an iPad on the same wifi
 
 First time running E2E: `npx playwright install webkit`.
 
-## Deploying to GitHub Pages
-
-The workflow in `.github/workflows/deploy.yml` is ready but nothing has been
-pushed anywhere. To put it online:
-
-1. Create a repo on GitHub and add it as a remote, then push `main`.
-2. In the repo, go to **Settings → Pages** and set **Source** to
-   **GitHub Actions**.
-3. The workflow runs typecheck, lint and tests, then builds with the right base
-   path and deploys.
-4. Share the resulting `https://<user>.github.io/<repo>/` URL with teachers, and
-   tell them to Add to Home Screen.
-
 ## Manual QA on a real iPad
 
-Everything below is something the automated suite genuinely cannot check.
+Everything below is something the automated suite cannot check.
 Playwright's WebKit is not Safari: it has no Home Screen install, no iOS storage
 eviction, and its `navigator.share` behaves differently from the real one.
 
@@ -92,13 +79,6 @@ eviction, and its `navigator.share` behaves differently from the real one.
 - [ ] Settings, **Erase everything** (type ERASE), then **Restore a backup**.
       The counts match what you had.
 
-### Accessibility
-
-- [ ] VoiceOver: a tile announces the student's full name, attendance and entry
-      count.
-- [ ] Settings, Accessibility, Reduce Motion: the sheet and toasts stop
-      animating.
-
 ## How it is put together
 
 ```
@@ -110,17 +90,5 @@ src/
   components/ Button, Sheet, Toast, SegmentedControl, LevelChip, Banner, Field
   styles/     theme.css (every design token), global.css
 ```
-
-Three rules worth keeping:
-
-1. **No component touches a Dexie table.** Everything goes through
-   `src/db/repos/*` inside transactions.
-2. **No hard-coded colours.** Every value comes from `src/styles/theme.css`, so
-   changing a token re-themes the whole app. `docs/design/preview.html` loads
-   the same file and is the quickest way to see a change.
-3. **Never `toISOString()` for a calendar date.** Calgary is UTC-7, so an
-   evening class would be filed under tomorrow. Use `src/lib/dates.ts`.
-
----
 
 Griffin Grader by Diego D.
