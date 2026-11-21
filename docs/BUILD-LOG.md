@@ -408,3 +408,49 @@ restoring the file brings all 24 back.
   reads the clock during render. The branch only runs when the timestamp
   exists, so the fallback is now a constant. Lint was right to object; a clock
   read in render is a re-render that silently differs from the last one.
+
+## 2026-11-21: Phase 8, E2E, docs and Definition of Done
+
+**Built:** the nine journeys from SPEC section 10 as Playwright specs, run in
+WebKit on iPad Pro 11 in both orientations (20 runs), plus `README.md` with the
+manual iPad checklist and `docs/TEACHER-GUIDE.md`.
+
+**Definition of Done, every item:**
+
+| Check | Result |
+|---|---|
+| `npm run typecheck` | pass |
+| `npm run lint` | pass |
+| `npm test` | pass, 183 tests in 14 files |
+| `npm run test:e2e` | pass, 20 runs (10 specs x 2 orientations) |
+| `npm run build` | pass |
+| No console errors on any screen | pass, 16 screens and interactions walked in WebKit, all clean |
+| Manual iPad QA checklist in README | present |
+| `docs/TEACHER-GUIDE.md` | present |
+
+Bundle is **147 KB gzipped** against the 250 KB target in SPEC section 8.
+
+**Key decisions and why:**
+
+- *The E2E suite stubs away `navigator.share` and `canShare`.* Playwright's
+  WebKit implements both, so an export would open a share sheet and never
+  produce a download. Stubbing forces the Blob fallback, whose bytes the test
+  can read. Real Safari does share, so that path stays on the manual checklist.
+- *Test 9 asserts on the precache manifest and then fetches every entry.*
+  SPEC 10 allows this because Playwright's WebKit does not run service workers
+  reliably. Fetching each URL proves nothing in the manifest is missing, which
+  is the failure that would actually break a cold offline launch.
+- *The manual checklist only contains things the suite genuinely cannot do*:
+  Home Screen install, real offline, the 100ms badge feel, long-press against
+  iPadOS gestures, the real share sheet, VoiceOver, Reduce Motion.
+
+**Still open for Diego:**
+
+- Nothing is deployed. The workflow is ready; creating the repo and switching
+  Pages to GitHub Actions is Diego's call, per CLAUDE.md.
+- The absent-tile contrast deviation from SPEC 4.5 is still unconfirmed after
+  being raised three times. Built accessible; say the word to switch.
+- No real PowerSchool export has been seen. The CSV mapper is forgiving and
+  every guess is editable, and the fixtures are labelled as guesses.
+- Higher-resolution school logos would make a sharper icon. The sources are
+  134x140 and 225x225.
