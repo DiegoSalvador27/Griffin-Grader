@@ -122,3 +122,59 @@ with Dexie and PapaParse still to come.
 - Nothing is deployed yet. Diego needs to create the repo and set
   Settings > Pages > Source to GitHub Actions before an iPad can install it.
 - The absent-tile contrast deviation from SPEC 4.5 is still unconfirmed.
+
+## 2026-11-21: Phase 1, data layer
+
+**Built:** `src/db/` (types, Dexie schema, seed, nine repositories including
+backup and restore), `src/lib/ids.ts`, `src/lib/dates.ts`. 52 unit tests pass,
+typecheck and lint clean.
+
+**The thing worth remembering: IndexedDB cannot index a boolean.**
+
+SPEC section 3 suggests `classes: 'id, archived'` and
+`students: 'id, classId, [classId+active]'`. Both of those columns are
+booleans, and valid IndexedDB keys are only number, string, Date, ArrayBuffer
+and Array. This does not fail quietly. Querying `[classId+active]` throws
+`DataError`, so *every* "list the active students in this class" lookup would
+have crashed the moment a class screen opened.
+
+Fix: drop both from the index strings and filter in memory after an indexed
+lookup on `classId`. A class holds about 40 students, so the scan is free. The
+model keeps its booleans, so nothing in SPEC section 3 had to change.
+`src/db/db.test.ts` contains a test that builds the *suggested* index and
+asserts it throws, so the index cannot be "helpfully" added back later.
+
+**Other decisions and why:**
+
+- *Attendance rows are created lazily.* Missing row means absent (SPEC 4.5), so
+  starting a class writes nothing. Readers must go through `statusFor` or
+  `statusMapForSession` rather than assuming a row exists. 40 writes avoided
+  every time a class starts.
+- *Assessments snapshot `categoryName` and `levelCode`.* A rubric edit in March
+  must not rewrite what a teacher recorded in November.
+- *A stale session closes at its last activity, not at now.* A class someone
+  forgot to end on Friday would otherwise look like it ran all weekend. See
+  `lastActivityAt` in `src/db/repos/sessions.ts`.
+- *Restore writes in 2000-row chunks inside one transaction.* SPEC section 1
+  asks for a full school year, which is six figures of assessments; handing
+  that to IndexedDB as a single array spikes memory on an iPad. Either the
+  whole restore lands or none of it does.
+- *`parseBackup` validates before anything is erased.* A restore replaces
+  everything, so a wrong file has to fail up front. A missing table is treated
+  as empty rather than fatal, because an older backup may simply not have had
+  one.
+
+**Tricky bits:**
+
+- *`vi.useFakeTimers()` deadlocks Dexie.* Dexie and fake-indexeddb schedule
+  their own work, and freezing the timers hangs them: five tests timed out at
+  10s each. `vi.useFakeTimers({ toFake: ['Date'] })` fakes the clock and leaves
+  the scheduler alone. See the top of `src/db/repos/sessions.test.ts`.
+- *`db.transaction()` positional overloads stop at five tables.* Deleting a
+  class touches six, so it uses the array form instead.
+
+**Open:**
+
+- `exactOptionalPropertyTypes` is off. With it on, `{ studentNumber: undefined }`
+  and "no studentNumber" become different types, which fights Dexie's update
+  patches. Worth revisiting after the trial.
