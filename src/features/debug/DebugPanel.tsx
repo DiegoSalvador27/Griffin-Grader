@@ -4,6 +4,7 @@ import Button from '../../components/Button';
 import { useToast } from '../../components/toastContext';
 import { clearErrors } from '../../lib/errorLog';
 import { seedIfEmpty } from '../../db/seed';
+import { forceUpdateNow } from '../../app/pwa';
 import { collectDiagnostics, formatDiagnostics, type Diagnostics } from './diagnostics';
 import styles from './DebugPanel.module.css';
 
@@ -171,14 +172,18 @@ export default function DebugPanel({ onClose }: { onClose: () => void }) {
               >
                 Restore missing defaults
               </Button>
+              <Button onClick={() => window.location.reload()}>Reload app</Button>
               <Button
                 variant="gold"
-                onClick={() => {
-                  // Bypasses the service worker so the newest build is fetched.
-                  window.location.reload();
+                onClick={async () => {
+                  const result = await forceUpdateNow();
+                  if (result === 'updating') toast.show('Installing the newest version');
+                  else if (result === 'already-current')
+                    toast.show('Already on the newest version');
+                  else toast.showError('Updates are not available here');
                 }}
               >
-                Reload app
+                Get the newest version
               </Button>
             </div>
           </>

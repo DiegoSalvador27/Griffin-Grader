@@ -49,3 +49,41 @@ export function registerServiceWorker(): void {
     },
   });
 }
+
+/**
+ * Forces the newest build to install, now.
+ *
+ * The app is deliberately `registerType: 'prompt'` so a class is never
+ * interrupted, which means a waiting worker can sit there indefinitely if the
+ * banner is missed. This is the manual escape hatch, reachable from the debug
+ * panel: ask the worker to re-check, tell any waiting worker to take over,
+ * then reload once it does.
+ *
+ * Returns what happened so the caller can tell the user something true.
+ */
+export async function forceUpdateNow(): Promise<'updating' | 'already-current' | 'unsupported'> {
+  if (!('serviceWorker' in navigator)) return 'unsupported';
+
+  const registration = await navigator.serviceWorker.getRegistration();
+  if (!registration) return 'unsupported';
+
+  // Ask the server whether there is a newer worker.
+  try {
+    await registration.update();
+  } catch {
+    // Offline, or the check failed. Fall through: there may still be one
+    // waiting from an earlier check.
+  }
+
+  const waiting = registration.waiting;
+  if (!waiting) return 'already-current';
+
+  // Reload once the new worker has actually taken control, not before.
+  navigator.serviceWorker.addEventListener(
+    'controllerchange',
+    () => window.location.reload(),
+    { once: true },
+  );
+  waiting.postMessage({ type: 'SKIP_WAITING' });
+  return 'updating';
+}
