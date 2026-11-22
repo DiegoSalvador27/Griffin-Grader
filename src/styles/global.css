@@ -41,13 +41,30 @@ body {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
-  position: fixed;
-  inset: 0;
+  /* Pinch-zoom off. `pan-x pan-y` still allows one-finger scrolling inside
+     .scroll-region, it only removes the two-finger zoom gesture. */
+  touch-action: pan-x pan-y;
 }
 
+/**
+ * `100dvh`, not `100%`, and no `position: fixed` on the body.
+ *
+ * A fixed body resolves `inset: 0` against the safe viewport on iPadOS, which
+ * left an unpainted band under the home indicator: the bevel-looking strip
+ * along the bottom. The dynamic viewport unit measures the real thing, and
+ * `overflow: hidden` on html and body is already enough to remove the
+ * document scroller, so nothing has to be pinned.
+ */
 #root {
-  height: 100%;
+  height: 100dvh;
   overflow: hidden;
+}
+
+/* Older WebKit without dvh support falls back to the layout viewport. */
+@supports not (height: 100dvh) {
+  #root {
+    height: 100%;
+  }
 }
 
 /* Opt in to scrolling. Momentum stays on, and a bounce inside the region

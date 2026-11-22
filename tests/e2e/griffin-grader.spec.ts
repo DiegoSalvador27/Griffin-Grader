@@ -226,7 +226,8 @@ test('the service worker precaches the whole app for offline use', async ({ page
 test('a class page shows the roster with attendance totals', async ({ page }) => {
   await createClass(page, 'PE 20', ROSTER);
   await page.goto('/#/classes');
-  await page.getByRole('link', { name: 'PE 20' }).click();
+  // The whole white area of the card is one control now, not a name link.
+  await page.getByRole('button', { name: 'Open PE 20' }).click();
 
   await expect(page.getByRole('heading', { name: 'PE 20' })).toBeVisible();
   await expect(page.getByRole('link', { name: "O'Neil, Cam" })).toBeVisible();

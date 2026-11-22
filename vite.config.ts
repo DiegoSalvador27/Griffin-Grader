@@ -16,6 +16,11 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 export default defineConfig({
   base,
+  // Stamped into the bundle so the debug panel can tell which build an iPad is
+  // actually running, which matters when a service worker is serving an old one.
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   plugins: [
     react(),
     VitePWA({

@@ -6,9 +6,13 @@
     <!-- viewport-fit=cover is required for env(safe-area-inset-*) to report
          real values. Without it the scoreboard sits under the iPad clock,
          because the status bar is black-translucent (see below). -->
+    <!-- maximum-scale + user-scalable=no turn off pinch-zoom. Safari ignores
+         these in a normal tab, but honours them for an installed Home Screen
+         app, which is how teachers run this. The JS in src/main.tsx blocks the
+         gesture events as a second line of defence. -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
 
     <title>Griffin Grader</title>

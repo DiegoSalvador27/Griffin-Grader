@@ -4,7 +4,7 @@ import Button from '../../components/Button';
 import Banner from '../../components/Banner';
 import { ToastStack } from '../../components/Toast';
 import { useToast } from '../../components/toastContext';
-import { WATERMARK } from '../../app/layout/Footer';
+import { WatermarkButton } from '../../app/layout/Footer';
 import { holdUpdates } from '../../app/pwa';
 import { keepAwake } from '../../lib/wakeLock';
 import { startOrResumeSession, endSession } from '../../db/repos/sessions';
@@ -258,7 +258,7 @@ export default function LiveClassPage() {
         ) : null}
 
         <ToastStack />
-        <p className={styles.watermark}>{WATERMARK}</p>
+        <WatermarkButton className={styles.watermark} />
       </div>
 
       {teamsPanelOpen ? (

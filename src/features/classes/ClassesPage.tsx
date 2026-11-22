@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import Button from '../../components/Button';
 import Banner from '../../components/Banner';
@@ -69,7 +69,7 @@ export default function ClassesPage() {
           <div className={`${styles.list} ${styles.archivedList}`}>
             {archived.map((s) => (
               <article key={s.cls.id} className={styles.card}>
-                <div className={styles.body}>
+                <div className={styles.archivedBody}>
                   <h3 className={styles.name}>{s.cls.name}</h3>
                   <p className={`t-stencil ${styles.status}`}>Archived</p>
                   <dl className={styles.meta}>
@@ -109,12 +109,14 @@ function ClassCard({ summary }: { summary: ClassSummary }) {
 
   return (
     <article className={`${styles.card} ${inProgress ? styles.live : ''}`}>
-      <div className={styles.body}>
-        <h3 className={styles.name}>
-          <Link className={styles.nameLink} to={`/classes/${cls.id}`}>
-            {cls.name}
-          </Link>
-        </h3>
+      {/* The whole white area opens the class, not just the name. */}
+      <button
+        type="button"
+        className={styles.body}
+        onClick={() => navigate(`/classes/${cls.id}`)}
+        aria-label={`Open ${cls.name}`}
+      >
+        <h3 className={styles.name}>{cls.name}</h3>
         <p
           className={`t-stencil ${styles.status} ${inProgress ? styles.statusLive : ''}`}
         >
@@ -134,7 +136,7 @@ function ClassCard({ summary }: { summary: ClassSummary }) {
                 : formatDateShort(summary.lastSessionDate)}
           </dd>
         </dl>
-      </div>
+      </button>
 
       <Button
         variant="gold"

@@ -48,8 +48,15 @@ export async function storageIsPersisted(): Promise<boolean> {
   }
 }
 
-/** True when running from the Home Screen rather than a Safari tab. */
+/** True when running from the Home Screen rather than a Safari tab.
+    matchMedia is guarded: this is also called from the debug panel, which has
+    to survive an environment where something is already broken. */
 export function isInstalled(): boolean {
   const standalone = (navigator as { standalone?: boolean }).standalone === true;
-  return standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (standalone) return true;
+  try {
+    return window.matchMedia?.('(display-mode: standalone)').matches ?? false;
+  } catch {
+    return false;
+  }
 }

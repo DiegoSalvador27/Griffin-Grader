@@ -6,7 +6,15 @@
   text-align: center;
 }
 
+/* A button, but deliberately styled as plain text: the debug gesture must not
+   advertise itself. */
 .mark {
   font-size: var(--fs-watermark);
   color: var(--text-secondary);
+  margin: 0;
+  padding: var(--space-2);
+  cursor: default;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
 }

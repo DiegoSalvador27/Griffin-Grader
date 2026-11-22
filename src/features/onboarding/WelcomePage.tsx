@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import { assetUrl } from '../../lib/assets';
-import { WATERMARK } from '../../app/layout/Footer';
+import { WatermarkButton } from '../../app/layout/Footer';
 import { isInstalled, updateSettings } from '../../db/repos/settings';
 import { createDemoClass } from './demo';
 import styles from './WelcomePage.module.css';
@@ -95,7 +95,7 @@ export default function WelcomePage() {
           ) : null}
         </div>
 
-        <p className={styles.watermark}>{WATERMARK}</p>
+        <WatermarkButton className={styles.watermark} />
       </div>
     </div>
   );

@@ -32,7 +32,38 @@
   box-shadow: var(--shadow-raised);
 }
 
+/* The whole white area is the control that opens the class, so a teacher can
+   tap anywhere on the card rather than hunting for the name. The gold Start
+   class bar below stays a separate button. */
 .body {
+  padding: var(--space-4);
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+
+.body:hover {
+  background: var(--color-bg);
+}
+
+.body:active {
+  background: var(--surface-sunken);
+}
+
+.body:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* Archived cards are read-only, so their body is a plain container. */
+.archivedBody {
   padding: var(--space-4);
   flex: 1;
   min-width: 0;
@@ -42,15 +73,6 @@
   font-size: var(--fs-h2);
   font-weight: var(--fw-bold);
   letter-spacing: var(--ls-tight);
-}
-
-.nameLink {
-  color: inherit;
-  text-decoration: none;
-}
-
-.nameLink:hover {
-  text-decoration: underline;
 }
 
 .status {
