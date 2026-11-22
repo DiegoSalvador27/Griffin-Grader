@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../app/App';
@@ -73,6 +73,25 @@ describe('the hidden debug gesture', () => {
     expect(panel).toHaveTextContent('Database');
     // Counts come from the real tables.
     expect(panel).toHaveTextContent('assessments');
+  });
+
+  /**
+   * iOS Safari only dispatches `click` to elements it treats as clickable:
+   * natively interactive ones, ones with an inline onclick attribute, or ones
+   * with `cursor: pointer`. The watermark is a plain <p> with `cursor: default`
+   * and React attaches listeners at the root, so a click-based handler never
+   * fired on a real iPad. This fires pointer events ONLY, with no click, which
+   * is what the iPad actually delivers.
+   */
+  it('opens from pointer events alone, with no click event', async () => {
+    renderFooter();
+    const mark = screen.getByText('Griffin Grader by Diego D.');
+
+    for (let i = 0; i < 5; i++) {
+      fireEvent.pointerUp(mark);
+    }
+
+    expect(await screen.findByRole('dialog', { name: 'Debug' })).toBeInTheDocument();
   });
 
   it('is not announced as something to press', () => {

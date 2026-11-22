@@ -14,14 +14,14 @@ export const WATERMARK = 'Griffin Grader by Diego D.';
  */
 export function WatermarkButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
-  const { onClick } = useSecretGesture(() => setOpen(true));
+  const { onPointerUp } = useSecretGesture(() => setOpen(true));
 
   return (
     <>
       {/* A paragraph, not a button. It is attribution text first, so screen
           readers should read it as text, and it must not announce itself as
           something to press. The tap handler is the hidden part. */}
-      <p className={`${styles.mark} ${className ?? ''}`} onClick={onClick}>
+      <p className={`${styles.mark} ${className ?? ''}`} onPointerUp={onPointerUp}>
         {WATERMARK}
       </p>
       {open ? <DebugPanel onClose={() => setOpen(false)} /> : null}
