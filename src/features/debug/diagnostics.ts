@@ -24,6 +24,10 @@ export interface Diagnostics {
     /** The numbers behind the bottom bevel question. */
     safeArea: { top: number; right: number; bottom: number; left: number };
     visualViewport: string;
+    /** Screen height minus viewport height, in the current orientation. Any
+        non-zero value is a band the app cannot paint into, which is what
+        produced the "white bar" along the bottom of the installed iPad app. */
+    unpaintedBand: number;
   };
   storage: { persisted: boolean; usageMb: string; quotaMb: string };
   serviceWorker: {
@@ -125,6 +129,14 @@ export async function collectDiagnostics(): Promise<Diagnostics> {
             window.visualViewport.height,
           )} at scale ${window.visualViewport.scale.toFixed(2)}`
         : 'not available',
+      // screen.width/height are reported unrotated, so pick the edge that
+      // matches the current orientation before comparing.
+      unpaintedBand: (() => {
+        const long = Math.max(window.screen.width, window.screen.height);
+        const short = Math.min(window.screen.width, window.screen.height);
+        const screenHeight = window.innerWidth > window.innerHeight ? short : long;
+        return Math.max(0, screenHeight - window.innerHeight);
+      })(),
     },
     storage: {
       persisted: await storageIsPersisted(),
@@ -154,6 +166,7 @@ export function formatDiagnostics(d: Diagnostics): string {
     `viewport       ${d.viewport.inner}, screen ${d.viewport.screen}, dpr ${d.viewport.dpr}`,
     `visual vp      ${d.viewport.visualViewport}`,
     `safe area      top ${d.viewport.safeArea.top} right ${d.viewport.safeArea.right} bottom ${d.viewport.safeArea.bottom} left ${d.viewport.safeArea.left}`,
+    `unpainted band ${d.viewport.unpaintedBand}px below the viewport`,
     '',
     `storage        persisted ${d.storage.persisted}, using ${d.storage.usageMb} MB of ${d.storage.quotaMb} MB`,
     `service worker ${d.serviceWorker.registrations} registration(s), waiting update ${d.serviceWorker.waiting}`,

@@ -7,6 +7,7 @@ import { useToast } from '../../components/toastContext';
 import { WatermarkButton } from '../../app/layout/Footer';
 import { holdUpdates } from '../../app/pwa';
 import { keepAwake } from '../../lib/wakeLock';
+import { useCanvasColor } from '../../lib/useCanvasColor';
 import { startOrResumeSession, endSession } from '../../db/repos/sessions';
 import { cycleStatus, setAllStatuses } from '../../db/repos/attendance';
 import { useLiveSession } from './useLiveSession';
@@ -67,6 +68,10 @@ export default function LiveClassPage() {
   }, []);
 
   useEffect(() => keepAwake(), []);
+
+  // This screen ends in a white toolbar, so the band below the viewport on an
+  // installed iPad has to be white too, or it reads as a bevel.
+  useCanvasColor('card');
 
   const data = useLiveSession(classId, sessionId ?? undefined);
   const teamSet = useLiveQuery(

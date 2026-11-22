@@ -13,6 +13,23 @@
 html {
   /* Stop iPadOS from inflating text when the app rotates to landscape. */
   -webkit-text-size-adjust: 100%;
+
+  /**
+   * The canvas colour, and the reason the "white bar" existed.
+   *
+   * On an installed iPad app the viewport came back 32px shorter than the
+   * screen (1180x788 against a 1180x820 screen) while the page still painted
+   * from y=0. Those last 32px sit OUTSIDE the viewport, so no element can
+   * cover them: the browser fills them with the canvas background, which
+   * propagates from here. Matching it to whatever each screen puts at its
+   * bottom edge makes the band invisible.
+   */
+  background: var(--color-bg);
+}
+
+/* The live class screen ends in a white toolbar, so its canvas is white. */
+html[data-canvas='card'] {
+  background: var(--surface-card);
 }
 
 /**

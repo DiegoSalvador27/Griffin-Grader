@@ -83,6 +83,10 @@ export default function DebugPanel({ onClose }: { onClose: () => void }) {
                   top {data.viewport.safeArea.top}, right {data.viewport.safeArea.right},
                   bottom {data.viewport.safeArea.bottom}, left {data.viewport.safeArea.left}
                 </dd>
+                <dt>Unpainted band</dt>
+                <dd className={data.viewport.unpaintedBand > 0 ? styles.bad : styles.good}>
+                  {data.viewport.unpaintedBand}px below the viewport
+                </dd>
               </dl>
             </section>
 
